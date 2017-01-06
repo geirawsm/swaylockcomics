@@ -15,15 +15,18 @@ stripe = '{}/striper/lunch-{}.jpg'.format(filedir, now)
 if not os.path.exists(stripe):
 	if not os.path.exists('{}/striper'.format(filedir)):
 		call(['mkdir','{}/striper'.format(filedir)])
-	curl = call(['curl','-f',link,'-o',stripe])
-	# Endre på størrelsen på bildet
-	call(['convert',stripe,'-resize','150%','{}/temp_lunch.jpg'.format(filedir)])
+	try:
+		curl = call(['curl','-f',link,'-o',stripe])
+		# Endre på størrelsen på bildet
+		call(['convert',stripe,'-resize','150%','{}/temp_lunch.jpg'.format(filedir)])
+	except:
+		stripe = False
 else:
 	pass
 # Hvis 404, hva da?
-tmp_file = '{}/tmp.jpg'.format(filedir)
+tmp_file = '{}/out.png'.format(filedir)
 call(['scrot','-z',tmp_file])
 call(['convert',tmp_file,'-scale','10%','-scale','1000%',tmp_file])
-call(['convert',tmp_file,'{}/temp_lunch.jpg'.format(filedir),'-gravity','center','-composite','{}/out.png'.format(filedir)])
+call(['convert',tmp_file,'{}/temp_lunch.jpg'.format(filedir),'-gravity','center','-composite',tmp_file])
 # Kjør lock-fil
-call(['i3lock','-i','{}/out.png'.format(filedir)])
+call(['i3lock','-i',tmp_file])
