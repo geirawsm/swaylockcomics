@@ -11,12 +11,15 @@ Python script to fetch the newest edition of the Norwegian comic strip Lunch and
 
 This script gets the latest strip for Lunch from tu.no which is added on top of a pixelated screenshot of your desktop. This image is then used in i3lock.
 
+If you use multiple displays, the script will only place the comic strip on your primary screen.
+
 Only tested in Arch Manjaro i3 4.8.15-1, but should work on others as well as long as the dependencies is in place.
 
 
 ## Dependencies:
-- ImageMagick v6.9.6-8
+- PythohnMagick v0.9.16-1
 - pendulum v0.8.0
 - i3lock v2.8
 - scrot v0.8
+- screeninfo v0.2.1
 - curl
