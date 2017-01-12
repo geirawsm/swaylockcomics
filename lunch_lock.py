@@ -2,19 +2,20 @@
 # -*- coding: utf-8 -*-
 import pendulum
 import os
-from subprocess import Popen, PIPE,call, check_output
+from subprocess import Popen, call
 import PythonMagick
 import re
 
 from screeninfo import get_monitors
 monitors = get_monitors()
-monitor_w = re.search(r'monitor\((\d+)x\d+\+\d\+\d', str(monitors[0])).group(1)
-monitor_h = re.search(r'monitor\(\d+x(\d+)\+\d\+\d', str(monitors[0])).group(1)
+monitor_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
+monitor_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
 
 filedir = os.path.dirname(os.path.abspath(__file__))
 
 #Hent dagens dato
 now = pendulum.now().to_date_string()
+
 # Hent nyeste Lunch-stripe
 link = 'http://www.tu.no/tegneserier/lunch/?module=TekComics&service=image&id=lunch&key={}'.format(now)
 stripe = '{}/striper/lunch-{}.jpg'.format(filedir, now)
@@ -57,3 +58,15 @@ scrot.write(tmp_out)
 
 # Kjør lock-fil
 call(['i3lock','-i',tmp_out])
+
+# Vedlikehold av mellomlagring av striper
+tmp_files = sorted(os.listdir('{}/striper'.format(filedir)))
+# Sørg for at man ved sletting kun tar hensyn til bildene og ikke andre filer/mapper
+for file in tmp_files:
+	if not '.jpg' in file:
+		tmp_files.remove(file)
+# Behold kun de 5 nyeste stripene
+if len(tmp_files) > 5:
+	clean_number = len(tmp_files) - 5 - 1
+	for i in tmp_files[0:clean_number]:
+		os.remove('{}/striper/{}'.format(filedir, i))
