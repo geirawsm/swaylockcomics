@@ -17,9 +17,9 @@ Only tested in Arch Manjaro i3 4.8.15-1, but should work on others as well as lo
 
 
 ## Dependencies:
-- PythohnMagick v0.9.16-1
+- PythonMagick v0.9.16-1
 - pendulum v0.8.0
 - i3lock v2.8
 - scrot v0.8
 - screeninfo v0.2.1
-- curl
+- curl (called by the subprocess module)
