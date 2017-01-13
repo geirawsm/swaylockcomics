@@ -12,23 +12,23 @@ monitors = get_monitors()
 monitor_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
 monitor_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
 
-serienavn = ['lunch', 'pondus']
-serie = str(sys.argv[1])
-if serie not in serienavn:
+comicname = ['lunch', 'pondus']
+comic = str(sys.argv[1])
+if comic not in comicname:
 	print('Ingen seriestripe er definert. Kjør scriptet ved å for eksempel skrive \'python {} lunch\''.format(filename = os.path.basename(__file__)))
 	sys.exit()
 
 filedir = os.path.dirname(os.path.abspath(__file__))
 
 # Hent nyeste stripe
-if serie == 'lunch':
+if comic == 'lunch':
 	now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
 	link = 'http://www.tu.no/tegneserier/lunch/?module=TekComics&service=image&id=lunch&key={}'.format(now)
-if serie == 'pondus':
+if comic == 'pondus':
 	now = pendulum.now().format('DDMMYY', formatter='alternative')
 	link = 'http://www.bt.no/external/cartoon/pondus/{}.gif'.format(now)
 
-stripe = '{}/striper/{}-{}.jpg'.format(filedir, serie, now)
+stripe = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
 temp_stripe = '{}/temp_stripe.jpg'.format(filedir)
 #Sjekk om siste fil allerede er henta
 if not os.path.exists(stripe):
