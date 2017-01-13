@@ -1,5 +1,5 @@
 # i3lock-comics
-Python script to fetch the newest edition of a comic strip and use it in i3lock.
+Python script to fetch the newest edition of a comic strip and use it in i3lock. *Highly* inspired by [xkcd-lock](https://github.com/angs/xkcd-lock) by [@angs](https://github.com/angs).
 
 &nbsp;
 
@@ -17,10 +17,6 @@ Comics included:
 
 Comics to be included in later releases:
 - xkcd
-
-## How to use
-
-Run the script like so: `./i3lock_comics.py lunch`
 
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
