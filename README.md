@@ -14,10 +14,11 @@ This script gets the latest strip of a comic which is added on top of a pixelate
 Comics included:
 - Lunch (no)
 - Pondus (no)
-
-Comics to be included in later releases:
 - xkcd
 
+## How to use
+
+Run the script like so: `./i3lock_comics.py lunch`
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
 Only tested in Arch Manjaro i3 4.8.15-1, but should work on others as well as long as the dependencies is in place.

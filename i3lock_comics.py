@@ -5,6 +5,8 @@ import os
 from subprocess import Popen, call
 import PythonMagick
 import re
+import requests
+from bs4 import BeautifulSoup as bs
 import sys
 
 from screeninfo import get_monitors
@@ -12,39 +14,92 @@ monitors = get_monitors()
 monitor_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
 monitor_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
 
-comicname = ['lunch', 'pondus']
-comic = str(sys.argv[1])
-if comic not in comicname:
-	print('Ingen seriestripe er definert. Kjør scriptet ved å for eksempel skrive \'python {} lunch\''.format(filename = os.path.basename(__file__)))
-	sys.exit()
+def get_xkcd():
+    '''
+    Gets the most recent xkcd comic strip.
+    '''
+    try:
+        req = requests.get('http://xkcd.com')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        strip = soup.find('div', attrs={'id': 'comic'})
+        link = strip.find('img')['src'].replace('//','')
+    except(ConnectionError):
+        link = False    
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    return link, now
+
+def get_lunch(days=None):
+    '''
+    Gets the most recent lunch comic strip. If given 'days', it goes that number of days back in time.
+    '''
+    if days == None:
+        now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    else:
+        now = pendulum.now().subtract(days=days).to_date_string()
+    link = 'http://www.tu.no/tegneserier/lunch/?module=TekComics&service=image&id=lunch&key={}'.format(now)
+    return link, now
+
+def get_pondus(days=None):
+    '''
+    Gets the most recent pondus comic strip. If given 'days', it goes that number of days back in time.
+    '''
+    if days == None:
+        now = pendulum.now().format('DDMMYY', formatter='alternative')
+    else:
+        now = pendulum.now().subtract(days=days).format('DDMMYY', formatter='alternative').to_date_string()
+    link = 'http://www.bt.no/external/cartoon/pondus/{}.gif'.format(now)
+    return link, now
+
+comicname = ['lunch', 'pondus', 'xkcd']
+try:
+    comic = str(sys.argv[1])
+except:
+    comics = ''
+    for comic in comicname:
+        if comic == comicname[-1]:
+            comics += 'and \'{}\''.format(comic)
+        else:
+            comics += '\'{}\', '.format(comic)
+    print(
+        'No comic has been entered. Run the script like this \'python {} lunch\'. '
+        'You can chose between {}.'.format(os.path.basename(__file__), comics))
+    sys.exit()
 
 filedir = os.path.dirname(os.path.abspath(__file__))
 
 # Hent nyeste stripe
 if comic == 'lunch':
-	now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-	link = 'http://www.tu.no/tegneserier/lunch/?module=TekComics&service=image&id=lunch&key={}'.format(now)
+    link = get_lunch()[0]
+    now = get_lunch()[1]
 if comic == 'pondus':
-	now = pendulum.now().format('DDMMYY', formatter='alternative')
-	link = 'http://www.bt.no/external/cartoon/pondus/{}.gif'.format(now)
+    link = get_pondus()[0]
+    now = get_pondus()[1]
+if comic == 'xkcd':
+    link = get_xkcd()[0]
+    now = get_xkcd()[1]
 
 stripe = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
 temp_stripe = '{}/temp_stripe.jpg'.format(filedir)
 #Sjekk om siste fil allerede er henta
 if not os.path.exists(stripe):
-	if not os.path.exists('{}/striper'.format(filedir)):
-		call(['mkdir','{}/striper'.format(filedir)])
-	try:
-		curl = call(['curl','-f',link,'-o',stripe])
-		# Endre på størrelsen på bildet
-		img = PythonMagick.Image(stripe)
-		#img.resize('175%')
-		img.resize('175%')
-		img.write(temp_stripe)
-	except:
-		img = False
-else:
-	pass
+    if not os.path.exists('{}/striper'.format(filedir)):
+        call(['mkdir','{}/striper'.format(filedir)])
+    curl = call(['curl','-f',link,'-o',stripe])
+    i = 0
+    while curl == 22:
+        print('entering while')
+        i += 1
+        link = eval('get_{}(days={})[0]'.format(comic, i))
+        print(link)
+        now = eval('get_{}(days={})[1]'.format(comic, i))
+        print(now)
+        stripe = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
+        curl = call(['curl','-f',link,'-o',stripe])
+        continue
+# Endre på størrelsen på bildet
+img = PythonMagick.Image(stripe)
+img.resize('175%')
+img.write(temp_stripe)
 
 temp_out = '{}/out.png'.format(filedir)
 call(['scrot','-z',temp_out])
@@ -73,10 +128,10 @@ call(['i3lock','-i',temp_out])
 temp_files = sorted(os.listdir('{}/striper'.format(filedir)))
 # Sørg for at man ved sletting kun tar hensyn til bildene og ikke andre filer/mapper
 for file in temp_files:
-	if not '.jpg' in file:
-		temp_files.remove(file)
+    if not '.jpg' in file:
+        temp_files.remove(file)
 # Behold kun de 5 nyeste stripene
 if len(temp_files) > 5:
-	clean_number = len(temp_files) - 5 - 1
-	for i in temp_files[0:clean_number]:
-		os.remove('{}/striper/{}'.format(filedir, i))
+    clean_number = len(temp_files) - 5 - 1
+    for i in temp_files[0:clean_number]:
+        os.remove('{}/striper/{}'.format(filedir, i))
