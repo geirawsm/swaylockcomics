@@ -1,0 +1,5 @@
+pendulum==0.8.0
+requests==2.12.4
+screeninfo==0.2.1
+PythonMagick==0.5
+beautifulsoup4==4.5.3

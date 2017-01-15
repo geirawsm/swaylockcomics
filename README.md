@@ -25,9 +25,12 @@ Only tested in Arch Manjaro i3 4.8.15-1, but should work on others as well as lo
 
 
 ## Dependencies:
-- PythonMagick v0.9.16-1
-- pendulum v0.8.0
 - i3lock v2.8
 - scrot v0.8
-- screeninfo v0.2.1
 - curl (called by the subprocess module)
+- pendulum v0.8.0
+- requests v2.12.4
+- screeninfo v0.2.1
+- PythonMagick v0.5
+- beautifulsoup4 v4.5.3
+- html5lib
