@@ -50,7 +50,22 @@ def get_pondus(days=None):
     link = 'http://www.bt.no/external/cartoon/pondus/{}.gif'.format(now)
     return link, now
 
-comicname = ['lunch', 'pondus', 'xkcd']
+def get_dilbert():
+    '''
+    Gets the most recent xkcd comic strip.
+    '''
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    try:
+        req = requests.get('http://dilbert.com/strip/{}'.format(now))
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        strip = soup.find('div', attrs={'class': 'img-comic-container'})
+        link = strip.find('img', attrs={'class': 'img-responsive img-comic'})['src']
+    except(ConnectionError):
+        link = False
+    return link, now
+
+
+comicname = ['lunch', 'pondus', 'xkcd', 'dilbert']
 try:
     comic = str(sys.argv[1])
 except:
@@ -77,6 +92,9 @@ if comic == 'pondus':
 if comic == 'xkcd':
     link = get_xkcd()[0]
     now = get_xkcd()[1]
+if comic == 'dilbert':
+    link = get_dilbert()[0]
+    now = get_dilbert()[1]
 
 stripe = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
 temp_stripe = '{}/temp_stripe.jpg'.format(filedir)
