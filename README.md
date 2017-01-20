@@ -15,6 +15,7 @@ Comics included:
 - Lunch (no)
 - Pondus (no)
 - xkcd
+- Dilbert
 
 ## How to use
 
