@@ -94,7 +94,7 @@ except:
 
 filedir = os.path.dirname(os.path.abspath(__file__))
 
-# Hent nyeste stripe
+# Fetch the newest comic
 if comic == 'lunch':
     link = get_lunch()[0]
     now = get_lunch()[1]
@@ -108,26 +108,27 @@ if comic == 'dilbert':
     link = get_dilbert()[0]
     now = get_dilbert()[1]
 
-stripe = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
-temp_stripe = '{}/temp_stripe.jpg'.format(filedir)
-# Sjekk om siste fil allerede er henta
-if not os.path.exists(stripe):
-    if not os.path.exists('{}/striper'.format(filedir)):
-        call(['mkdir', '{}/striper'.format(filedir)])
-    curl = call(['curl', '-f', link, '-o', stripe])
+strips = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
+temp_strip = '{}/temp_strip.jpg'.format(filedir)
+# Check to see if the latest comic is already in place
+if not os.path.exists(strips):
+    if not os.path.exists('{}/strip'.format(filedir)):
+        call(['mkdir', '{}/strips'.format(filedir)])
+    curl = call(['curl', '-f', link, '-o', strips])
     i = 0
     while curl == 22:
         i += 1
         link = eval('get_{}(days={})[0]'.format(comic, i))
         now = eval('get_{}(days={})[1]'.format(comic, i))
-        stripe = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
-        curl = call(['curl', '-f', link, '-o', stripe])
+        strips = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
+        curl = call(['curl', '-f', link, '-o', strips])
         continue
-# Endre på størrelsen på bildet
 img = PythonMagick.Image(stripe)
 img.resize('175%')
 img.write(temp_stripe)
 
+# Change the size of the comic strip
+# Take screenshot of screen and pixellize it
 temp_out = '{}/out.png'.format(filedir)
 call(['scrot', '-z', temp_out])
 
@@ -144,6 +145,7 @@ img.annotate(
 )
 img_w = img.size().width()
 img_h = img.size().height()
+# Make sure comic is placed on the primary screen
 img_w = img_w // 2
 img_h = img_h // 2
 placement_w = (int(monitor_w) // 2) - img_w
@@ -156,7 +158,7 @@ scrot.composite(
 )
 scrot.write(temp_out)
 
-# Kjør lock-fil
+# Run lock file
 call(['i3lock', '-i', temp_out])
 
 # Vedlikehold av mellomlagring av striper
