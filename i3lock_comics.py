@@ -120,7 +120,7 @@ if not os.path.exists(strips):
         i += 1
         link = eval('get_{}(days={})[0]'.format(comic, i))
         now = eval('get_{}(days={})[1]'.format(comic, i))
-        strips = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
+        strips = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
         curl = call(['curl', '-f', link, '-o', strips])
         continue
 
@@ -129,11 +129,11 @@ img = Image.open(strips)
 img_w = int(float(img.size[0] * 1.75))
 img_h = int(float(img.size[1] * 1.75))
 img = img.resize((img_w, img_h), Image.ANTIALIAS)
-img.save(temp_strip)
+img.convert('RGB').save(temp_strip)
 
 # Take screenshot of screen and pixellize it
 temp_out = '{}/out.png'.format(filedir)
-call(['scrot', '-z', temp_out])
+call(['scrot', temp_out])
 scrot = Image.open(temp_out)
 scrot_w = int(float(scrot.size[0] * 0.1))
 scrot_h = int(float(scrot.size[1] * 0.1))
@@ -157,15 +157,14 @@ scrot.save(temp_out)
 # Run lock file
 call(['i3lock', '-i', temp_out])
 
-# Vedlikehold av mellomlagring av striper
-temp_files = sorted(os.listdir('{}/striper'.format(filedir)))
-# Sørg for at man ved sletting kun tar hensyn
-# til bildene og ikke andre filer/mapper
+# Maintain all the strips: keep max 5 strips at a time
+temp_files = sorted(os.listdir('{}/strips'.format(filedir)))
+# Make sure that only the images are deleted, not other files/folders
 for file in temp_files:
     if '.jpg' not in file:
         temp_files.remove(file)
-# Behold kun de 5 nyeste stripene
+# Only keep the 5 newest files
 if len(temp_files) > 5:
     clean_number = len(temp_files) - 5 - 1
     for i in temp_files[0:clean_number]:
-        os.remove('{}/striper/{}'.format(filedir, i))
+        os.remove('{}/strips/{}'.format(filedir, i))
