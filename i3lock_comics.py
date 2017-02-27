@@ -3,7 +3,7 @@
 import pendulum
 import os
 from subprocess import call
-import PythonMagick
+from PIL import Image
 import re
 import requests
 from bs4 import BeautifulSoup as bs
@@ -123,40 +123,36 @@ if not os.path.exists(strips):
         strips = '{}/striper/{}-{}.jpg'.format(filedir, comic, now)
         curl = call(['curl', '-f', link, '-o', strips])
         continue
-img = PythonMagick.Image(stripe)
-img.resize('175%')
-img.write(temp_stripe)
 
 # Change the size of the comic strip
+img = Image.open(strips)
+img_w = int(float(img.size[0] * 1.75))
+img_h = int(float(img.size[1] * 1.75))
+img = img.resize((img_w, img_h), Image.ANTIALIAS)
+img.save(temp_strip)
+
 # Take screenshot of screen and pixellize it
 temp_out = '{}/out.png'.format(filedir)
 call(['scrot', '-z', temp_out])
+scrot = Image.open(temp_out)
+scrot_w = int(float(scrot.size[0] * 0.1))
+scrot_h = int(float(scrot.size[1] * 0.1))
+scrot.save(temp_out)
+scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+scrot_w = int(float(scrot_w * 10))
+scrot_h = int(float(scrot_h * 10))
+scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+scrot.save(temp_out)
 
-scrot = PythonMagick.Image(temp_out)
-scrot.scale('10%')
-scrot.scale('1000%')
-scrot.write(temp_out)
-
-img = PythonMagick.Image(temp_stripe)
-img.font('/usr/share/fonts/TTF/LiberationSans-Bold.ttf')
-img.annotate(
-    'github.com/armandg/i3lock-comics',
-    PythonMagick.GravityType.SouthEastGravity
-)
-img_w = img.size().width()
-img_h = img.size().height()
 # Make sure comic is placed on the primary screen
+img_w = img.size[0]
+img_h = img.size[1]
 img_w = img_w // 2
 img_h = img_h // 2
 placement_w = (int(monitor_w) // 2) - img_w
 placement_h = (int(monitor_h) // 2) - img_h
-scrot.composite(
-    img,
-    placement_w,
-    placement_h,
-    PythonMagick.CompositeOperator.SrcOverCompositeOp
-)
-scrot.write(temp_out)
+scrot.paste(img, (placement_w, placement_h))
+scrot.save(temp_out)
 
 # Run lock file
 call(['i3lock', '-i', temp_out])
