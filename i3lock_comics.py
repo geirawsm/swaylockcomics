@@ -13,6 +13,29 @@ from screeninfo import get_monitors
 monitors = get_monitors()
 mon_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
 mon_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
+# Setting max width for strips
+max_screen_estate = 0.8
+max_w = int(int(mon_w) * max_screen_estate)
+max_h = int(int(mon_h) * max_screen_estate)
+
+
+def ratio_check(img_w, img_h):
+    '''Calculate if the image is too wide or high. Based on this, find out how
+    much the image has to be resized for it to fit within the max screen
+    estate.'''
+    global max_w
+    global max_h
+    print('init img size: {}x{}'.format(img_w, img_h))
+    img_w = int(img_w * 1.2)
+    img_h = int(img_h * 1.2)
+    print('resized: {}x{}'.format(img_w, img_h))
+    ratio = min(max_w / img_w, max_h / img_h)
+    print(ratio)
+    if ratio < 1:
+        img_w = int(img_w * ratio)
+        img_h = int(img_h * ratio)
+    print('new size: {}x{}'.format(img_w, img_h))
+    return img_w, img_h
 
 def get_xkcd():
     '''
@@ -118,8 +141,11 @@ if not os.path.exists(strips):
 
 # Change the size of the comic strip
 img = Image.open(strips)
-img_w = int(float(img.size[0] * 1.75))
-img_h = int(float(img.size[1] * 1.75))
+img_w = int(img.size[0])
+img_h = int(img.size[1])
+new_size = ratio_check(img_w, img_h)
+img_w = new_size[0]
+img_h = new_size[1]
 img = img.resize((img_w, img_h), Image.ANTIALIAS)
 img.convert('RGB').save(temp_strip)
 
