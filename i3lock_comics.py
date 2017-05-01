@@ -75,9 +75,12 @@ def get_dilbert():
     return link, now
 
 
+# Fetch the newest comic
 comicname = ['lunch', 'pondus', 'xkcd', 'dilbert']
 try:
     comic = str(sys.argv[1])
+    link = eval('get_{}()[0]'.format(comic))
+    now = eval('get_{}()[1]'.format(comic))
 except:
     comics = ''
     for comic in comicname:
@@ -92,20 +95,6 @@ except:
     sys.exit()
 
 filedir = os.path.dirname(os.path.abspath(__file__))
-
-# Fetch the newest comic
-if comic == 'lunch':
-    link = get_lunch()[0]
-    now = get_lunch()[1]
-if comic == 'pondus':
-    link = get_pondus()[0]
-    now = get_pondus()[1]
-if comic == 'xkcd':
-    link = get_xkcd()[0]
-    now = get_xkcd()[1]
-if comic == 'dilbert':
-    link = get_dilbert()[0]
-    now = get_dilbert()[1]
 
 strips = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
 temp_strip = '{}/temp_strip.jpg'.format(filedir)
