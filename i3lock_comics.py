@@ -11,9 +11,8 @@ import sys
 
 from screeninfo import get_monitors
 monitors = get_monitors()
-monitor_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
-monitor_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
-
+mon_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
+mon_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
 
 def get_xkcd():
     '''
@@ -52,9 +51,9 @@ def get_pondus(days=None):
     if days is None:
         now = pendulum.now().format('DDMMYY', formatter='alternative')
     else:
-        now = pendulum.now().subtract(days=days)\
-            .format('DDMMYY', formatter='alternative').to_date_string()
-    link = 'http://www.bt.no/external/cartoon/pondus/{}.gif'.format(now)
+        now = str(pendulum.now().subtract(days=days)\
+            .format('DDMMYY', formatter='alternative'))
+    link = 'https://cartoon-prod.schibsted.tech/pondus/{}.gif'.format(now)
     return link, now
 
 
@@ -87,7 +86,7 @@ except:
         else:
             comics += '\'{}\', '.format(comic)
     print(
-        'No comic has been entered. Run the script like this \'python {}'
+        'Couldn\'t find a comic. Run the script like this \'python {}'
         ' lunch\'. You can chose between {}.'
         .format(os.path.basename(__file__), comics))
     sys.exit()
@@ -114,8 +113,12 @@ temp_strip = '{}/temp_strip.jpg'.format(filedir)
 if not os.path.exists(strips):
     if not os.path.exists('{}/strip'.format(filedir)):
         call(['mkdir', '{}/strips'.format(filedir)])
-    curl = call(['curl', '-f', link, '-o', strips])
+    curl = call(['curl', '-f', link, '-o', strips, '--connect-timeout', '3'])
     i = 0
+    # If curl get code 28 (timeout), use another random image from same comic
+    if curl == 28:
+        backup_strip = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
+    # If curl get code 22 (basically a 404), try previous dates
     while curl == 22:
         i += 1
         link = eval('get_{}(days={})[0]'.format(comic, i))
@@ -149,8 +152,8 @@ img_w = img.size[0]
 img_h = img.size[1]
 img_w = img_w // 2
 img_h = img_h // 2
-placement_w = (int(monitor_w) // 2) - img_w
-placement_h = (int(monitor_h) // 2) - img_h
+placement_w = (int(mon_w) // 2) - img_w
+placement_h = (int(mon_h) // 2) - img_h
 scrot.paste(img, (placement_w, placement_h))
 scrot.save(temp_out)
 
