@@ -22,16 +22,20 @@ Comics included:
 Run the script like so: `./i3lock_comics.py lunch`
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
-Only tested in Arch Manjaro i3 4.8.15-1, but should work on others as well as long as the dependencies is in place.
+Tested in following OS:
+- Manjaro i3 4.8.15-1
+- Solus + i3 4.9.24-22.lts
+
+Other should work as well as long as the dependencies is in place.
 
 
 ## Dependencies:
 - i3lock v2.8
 - scrot v0.8
 - curl (called by the subprocess module)
-- pendulum v0.8.0
-- requests v2.12.4
-- screeninfo v0.2.1
-- PythonMagick v0.5
+- pendulum v1.1.0
+- requests v2.13.0
+- screeninfo v0.2.2
+- Pillow v4.1.1
 - beautifulsoup4 v4.5.3
 - html5lib
