@@ -37,6 +37,7 @@ def ratio_check(img_w, img_h):
     print('new size: {}x{}'.format(img_w, img_h))
     return img_w, img_h
 
+
 def get_xkcd():
     '''
     Gets the most recent xkcd comic strip.
@@ -46,7 +47,7 @@ def get_xkcd():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         strip = soup.find('div', attrs={'id': 'comic'})
         link = strip.find('img')['src'].replace('//', '')
-    except(ConnectionError):
+    except(OSError.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -74,8 +75,8 @@ def get_pondus(days=None):
     if days is None:
         now = pendulum.now().format('DDMMYY', formatter='alternative')
     else:
-        now = str(pendulum.now().subtract(days=days)\
-            .format('DDMMYY', formatter='alternative'))
+        now = str(pendulum.now().subtract(days=days)
+                  .format('DDMMYY', formatter='alternative'))
     link = 'https://cartoon-prod.schibsted.tech/pondus/{}.gif'.format(now)
     return link, now
 
@@ -93,7 +94,7 @@ def get_dilbert():
             'img',
             attrs={'class': 'img-responsive img-comic'}
         )['src']
-    except(ConnectionError):
+    except(OSError.ConnectionError):
         link = False
     return link, now
 
