@@ -277,41 +277,10 @@ if not os.path.exists(strips):
         curl = call(['curl', '-f', link, '-o', strips])
         continue
 
-# Change the size of the comic strip
-img = Image.open(strips)
-img_w = int(img.size[0])
-img_h = int(img.size[1])
-new_size = ratio_check(img_w, img_h)
-img_w = new_size[0]
-img_h = new_size[1]
-img = img.resize((img_w, img_h), Image.ANTIALIAS)
-img.convert('RGB').save(temp_strip)
-
-# Take screenshot of screen and pixellize it
-temp_out = '{}/out.png'.format(filedir)
-call(['scrot', temp_out])
-scrot = Image.open(temp_out)
-scrot_w = int(float(scrot.size[0] * 0.1))
-scrot_h = int(float(scrot.size[1] * 0.1))
-scrot.save(temp_out)
-scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
-scrot_w = int(float(scrot_w * 10))
-scrot_h = int(float(scrot_h * 10))
-scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
-scrot.save(temp_out)
-
-# Make sure comic is placed on the primary screen
-img_w = img.size[0]
-img_h = img.size[1]
-img_w = img_w // 2
-img_h = img_h // 2
-placement_w = (int(mon_w) // 2) - img_w
-placement_h = (int(mon_h) // 2) - img_h
-scrot.paste(img, (placement_w, placement_h))
-scrot.save(temp_out)
+temp_out = scrot()
 
 # Run lock file
-call(['i3lock', '-i', temp_out])
+call(['i3lock', '-i', scrot(strips)])
 
 # Maintain all the strips: keep max 5 strips at a time
 # Make sure that only the images are deleted, not other files/folders
