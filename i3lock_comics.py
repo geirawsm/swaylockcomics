@@ -263,7 +263,7 @@ if not os.path.exists(strips):
     if curl == 6:
         print('Couldn\'t resolve the host for download comic. Is your '
               'internet ok?')
-        sys.exit()
+        call(['i3lock', '-i', scrot(strips)])
     # If curl get code 28 (timeout), use the latest strip from same comic
     if curl == 28:
         strips = backup_strip
