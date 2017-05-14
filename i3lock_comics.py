@@ -59,31 +59,35 @@ def get_xkcd():
     return link, now
 
 
-def get_lunch(days=None):
+def get_lunch():
     '''
-    Gets the most recent lunch comic strip. If given 'days', it goes that
-    number of days back in time.
+    Gets the most recent Lunch comic strip.
     '''
-    if days is None:
-        now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    else:
-        now = pendulum.now().subtract(days=days).to_date_string()
-    link = 'https://www.tu.no/tegneserier/lunch/?module=TekComics&service'\
-        '=image&id=lunch&key={}'.format(now)
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/lunch/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
 
 
-def get_pondus(days=None):
+def get_pondus():
     '''
-    Gets the most recent pondus comic strip. If given 'days', it goes that
-    number of days back in time.
+    Gets the most recent Rocky comic strip.
     '''
-    if days is None:
-        now = pendulum.now().format('DDMMYY', formatter='alternative')
-    else:
-        now = str(pendulum.now().subtract(days=days)
-                  .format('DDMMYY', formatter='alternative'))
-    link = 'https://cartoon-prod.schibsted.tech/pondus/{}.gif'.format(now)
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/pondus/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
 
 
@@ -105,8 +109,124 @@ def get_dilbert():
     return link, now
 
 
+def get_rocky():
+    '''
+    Gets the most recent Rocky comic strip.
+    '''
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/rocky/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    return link, now
+
+
+def get_nemi():
+    '''
+    Gets the most recent Nemi comic strip.
+    '''
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/nemi/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    return link, now
+
+
+def get_zelda():
+    '''
+    Gets the most recent Zelda comic strip.
+    '''
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/zelda-lille-berlin/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    return link, now
+
+
+def get_fagprat():
+    '''
+    Gets the most recent Fagprat comic strip.
+    '''
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/fagprat/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    return link, now
+
+
+def get_dunce():
+    '''
+    Gets the most recent Dunce comic strip.
+    '''
+    try:
+        req = requests.get('http://www.dagbladet.medialaben.no'
+                           '/tegneserie/dunce/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('a', attrs={'class': 'strip-container'})\
+            .find('img')['src']
+    except(OSError.ConnectionError):
+        link = False
+    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    return link, now
+
+
+def scrot(strip=False):
+    # Take screenshot of screen and pixellize it
+    temp_out = '{}/out.png'.format(filedir)
+    call(['scrot', temp_out])
+    scrot = Image.open(temp_out)
+    scrot_w = int(float(scrot.size[0] * 0.1))
+    scrot_h = int(float(scrot.size[1] * 0.1))
+    scrot.save(temp_out)
+    scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+    scrot_w = int(float(scrot_w * 10))
+    scrot_h = int(float(scrot_h * 10))
+    scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+    scrot.save(temp_out)
+
+    if strip:
+        # Change the size of the comic strip
+        img = Image.open(strips)
+        img_w = int(img.size[0])
+        img_h = int(img.size[1])
+        new_size = ratio_check(img_w, img_h)
+        img_w = new_size[0]
+        img_h = new_size[1]
+        img = img.resize((img_w, img_h), Image.ANTIALIAS)
+        img.convert('RGB').save(temp_strip)
+        # Make sure comic is placed on the primary screen
+        img_w = img.size[0]
+        img_h = img.size[1]
+        img_w = img_w // 2
+        img_h = img_h // 2
+        placement_w = (int(mon_w) // 2) - img_w
+        placement_h = (int(mon_h) // 2) - img_h
+        scrot.paste(img, (placement_w, placement_h))
+        scrot.save(temp_out)
+    return temp_out
+
 # Fetch the newest comic
-comicname = ['lunch', 'pondus', 'xkcd', 'dilbert']
+comicname = ['lunch', 'pondus', 'xkcd', 'dilbert', 'rocky', 'nemi', 'zelda',
+             'fagprat', 'dunce']
 try:
     comic = str(sys.argv[1])
     link = eval('get_{}()[0]'.format(comic))
