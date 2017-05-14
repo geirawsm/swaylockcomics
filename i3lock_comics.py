@@ -11,8 +11,18 @@ import sys
 
 from screeninfo import get_monitors
 monitors = get_monitors()
-mon_w = re.search(r'monitor\((\d+)x\d+.*', str(monitors[0])).group(1)
-mon_h = re.search(r'monitor\(\d+x(\d+).*', str(monitors[0])).group(1)
+mon_w = 0
+mon_h = 0
+# Check which monitor is biggest
+for monitor in monitors:
+    temp_mon_w = int(re.search(r'monitor\((\d+)x\d+.*',
+                     str(monitor)).group(1))
+    temp_mon_h = int(re.search(r'monitor\(\d+x(\d+).*',
+                     str(monitor)).group(1))
+    if temp_mon_w > mon_w:
+        mon_w = temp_mon_w
+    if temp_mon_h > mon_h:
+        mon_h = temp_mon_h
 # Setting max width for strips
 max_screen_estate = 0.8
 max_w = int(int(mon_w) * max_screen_estate)
@@ -21,20 +31,16 @@ max_h = int(int(mon_h) * max_screen_estate)
 
 def ratio_check(img_w, img_h):
     '''Calculate if the image is too wide or high. Based on this, find out how
-    much the image has to be resized for it to fit within the max screen
+    much the image has to be resized for it to fit within the maximum screen
     estate.'''
     global max_w
     global max_h
-    print('init img size: {}x{}'.format(img_w, img_h))
-    img_w = int(img_w * 1.2)
-    img_h = int(img_h * 1.2)
-    print('resized: {}x{}'.format(img_w, img_h))
+    img_w = int(img_w * 1.75)
+    img_h = int(img_h * 1.75)
     ratio = min(max_w / img_w, max_h / img_h)
-    print(ratio)
     if ratio < 1:
         img_w = int(img_w * ratio)
         img_h = int(img_h * ratio)
-    print('new size: {}x{}'.format(img_w, img_h))
     return img_w, img_h
 
 
@@ -119,24 +125,35 @@ except:
     sys.exit()
 
 filedir = os.path.dirname(os.path.abspath(__file__))
+strips_folder = '{}/strips/'.format(filedir)
+temp_files = sorted(os.listdir(strips_folder))
+for i in temp_files:
+    if comic in i:
+        backup_strip = i
+        break
 
-strips = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
+strips = '{}{}-{}.jpg'.format(strips_folder, comic, now)
 temp_strip = '{}/temp_strip.jpg'.format(filedir)
 # Check to see if the latest comic is already in place
 if not os.path.exists(strips):
-    if not os.path.exists('{}/strip'.format(filedir)):
-        call(['mkdir', '{}/strips'.format(filedir)])
-    curl = call(['curl', '-f', link, '-o', strips, '--connect-timeout', '3'])
-    i = 0
-    # If curl get code 28 (timeout), use another random image from same comic
+    if not os.path.exists(strips_folder):
+        call(['mkdir', strips_folder])
+    curl = call(['curl', '-f', link, '-o', strips,
+                 '--connect-timeout', '3'])
+    if curl == 6:
+        print('Couldn\'t resolve the host for download comic. Is your '
+              'internet ok?')
+        sys.exit()
+    # If curl get code 28 (timeout), use the latest strip from same comic
     if curl == 28:
-        backup_strip = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
+        strips = backup_strip
     # If curl get code 22 (basically a 404), try previous dates
+    i = 0
     while curl == 22:
         i += 1
         link = eval('get_{}(days={})[0]'.format(comic, i))
         now = eval('get_{}(days={})[1]'.format(comic, i))
-        strips = '{}/strips/{}-{}.jpg'.format(filedir, comic, now)
+        strips = '{}{}-{}.jpg'.format(strips_folder, comic, now)
         curl = call(['curl', '-f', link, '-o', strips])
         continue
 
@@ -177,7 +194,6 @@ scrot.save(temp_out)
 call(['i3lock', '-i', temp_out])
 
 # Maintain all the strips: keep max 5 strips at a time
-temp_files = sorted(os.listdir('{}/strips'.format(filedir)))
 # Make sure that only the images are deleted, not other files/folders
 for file in temp_files:
     if '.jpg' not in file:
@@ -186,4 +202,4 @@ for file in temp_files:
 if len(temp_files) > 5:
     clean_number = len(temp_files) - 5 - 1
     for i in temp_files[0:clean_number]:
-        os.remove('{}/strips/{}'.format(filedir, i))
+        os.remove('{}{}'.format(strips_folder, i))
