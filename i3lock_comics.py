@@ -53,7 +53,7 @@ def get_xkcd():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         strip = soup.find('div', attrs={'id': 'comic'})
         link = strip.find('img')['src'].replace('//', '')
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -69,7 +69,7 @@ def get_lunch():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -85,7 +85,7 @@ def get_pondus():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -104,7 +104,7 @@ def get_dilbert():
             'img',
             attrs={'class': 'img-responsive img-comic'}
         )['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     return link, now
 
@@ -119,7 +119,7 @@ def get_rocky():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -135,7 +135,7 @@ def get_nemi():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -151,7 +151,7 @@ def get_zelda():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -167,7 +167,7 @@ def get_fagprat():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
@@ -183,7 +183,7 @@ def get_dunce():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(OSError.ConnectionError):
+    except(requests.ConnectionError):
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
