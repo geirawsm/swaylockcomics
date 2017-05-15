@@ -204,24 +204,27 @@ def scrot(strip=False):
     scrot.save(temp_out)
 
     if strip:
-        # Change the size of the comic strip
-        img = Image.open(strips)
-        img_w = int(img.size[0])
-        img_h = int(img.size[1])
-        new_size = ratio_check(img_w, img_h)
-        img_w = new_size[0]
-        img_h = new_size[1]
-        img = img.resize((img_w, img_h), Image.ANTIALIAS)
-        img.convert('RGB').save(temp_strip)
-        # Make sure comic is placed on the primary screen
-        img_w = img.size[0]
-        img_h = img.size[1]
-        img_w = img_w // 2
-        img_h = img_h // 2
-        placement_w = (int(mon_w) // 2) - img_w
-        placement_h = (int(mon_h) // 2) - img_h
-        scrot.paste(img, (placement_w, placement_h))
-        scrot.save(temp_out)
+        if not os.path.exists(strip):
+            pass
+        else:
+            # Change the size of the comic strip
+            img = Image.open(strip)
+            img_w = int(img.size[0])
+            img_h = int(img.size[1])
+            new_size = ratio_check(img_w, img_h)
+            img_w = new_size[0]
+            img_h = new_size[1]
+            img = img.resize((img_w, img_h), Image.ANTIALIAS)
+            img.convert('RGB').save(temp_strip)
+            # Make sure comic is placed on the primary screen
+            img_w = img.size[0]
+            img_h = img.size[1]
+            img_w = img_w // 2
+            img_h = img_h // 2
+            placement_w = (int(mon_w) // 2) - img_w
+            placement_h = (int(mon_h) // 2) - img_h
+            scrot.paste(img, (placement_w, placement_h))
+            scrot.save(temp_out)
     return temp_out
 
 # Fetch the newest comic
@@ -238,49 +241,55 @@ except:
             comics += 'and \'{}\''.format(comic)
         else:
             comics += '\'{}\', '.format(comic)
-    print(
-        'Couldn\'t find a comic. Run the script like this \'python {}'
-        ' lunch\'. You can chose between {}.'
-        .format(os.path.basename(__file__), comics))
+    print('Couldn\'t find a comic. Run the script like this \'python {}'
+          ' lunch\'. You can chose between {}.'
+          .format(os.path.basename(__file__), comics))
     sys.exit()
 
 filedir = os.path.dirname(os.path.abspath(__file__))
 strips_folder = '{}/strips/'.format(filedir)
 temp_files = sorted(os.listdir(strips_folder))
-for i in temp_files:
-    if comic in i:
-        backup_strip = i
-        break
+try:
+    backup_strip = temp_files[0]
+    for i in temp_files:
+        if comic in i:
+            backup_strip = i
+            break
+except:
+    backup_strip = ''
 
-strips = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
 temp_strip = '{}/temp_strip.jpg'.format(filedir)
-# Check to see if the latest comic is already in place
-if not os.path.exists(strips):
-    if not os.path.exists(strips_folder):
-        call(['mkdir', strips_folder])
-    curl = call(['curl', '-f', link, '-o', strips,
-                 '--connect-timeout', '3'])
-    if curl == 6:
-        print('Couldn\'t resolve the host for download comic. Is your '
-              'internet ok?')
-        call(['i3lock', '-i', scrot(strips)])
-    # If curl get code 28 (timeout), use the latest strip from same comic
-    if curl == 28:
-        strips = backup_strip
-    # If curl get code 22 (basically a 404), try previous dates
-    i = 0
-    while curl == 22:
-        i += 1
-        link = eval('get_{}(days={})[0]'.format(comic, i))
-        now = eval('get_{}(days={})[1]'.format(comic, i))
-        strips = '{}{}-{}.jpg'.format(strips_folder, comic, now)
-        curl = call(['curl', '-f', link, '-o', strips])
-        continue
+if link is False:
+    strips = backup_strip
+else:
+    # Check to see if the latest comic is already in place
+    if not os.path.exists(strip):
+        if not os.path.exists(strips_folder):
+            call(['mkdir', strips_folder])
+        else:
+            curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout', '3'])
+            if curl == 6:
+                print('Couldn\'t resolve the host for download comic. Is your '
+                      'internet ok?')
+                call(['i3lock', '-i', scrot()])
+            # If curl get code 28 (timeout), use the latest strip from same comic
+            if curl == 28:
+                strip = backup_strip
+            # If curl get code 22 (basically a 404), try previous dates
+            i = 0
+            while curl == 22:
+                i += 1
+                link = eval('get_{}(days={})[0]'.format(comic, i))
+                now = eval('get_{}(days={})[1]'.format(comic, i))
+                strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+                curl = call(['curl', '-f', link, '-o', strips])
+                continue
 
-temp_out = scrot()
+temp_out = scrot(strip)
 
 # Run lock file
-call(['i3lock', '-i', scrot(strips)])
+call(['i3lock', '-i', scrot(strip)])
 
 # Maintain all the strips: keep max 5 strips at a time
 # Make sure that only the images are deleted, not other files/folders
