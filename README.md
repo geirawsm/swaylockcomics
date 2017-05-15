@@ -16,6 +16,11 @@ Comics included:
 - Pondus (no)
 - xkcd
 - Dilbert
+- Rocky (no)
+- Nemi (no)
+- Zelda (no)
+- Fagprat (no)
+- Dunce (no)
 
 ## How to use
 
