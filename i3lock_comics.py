@@ -44,7 +44,7 @@ def ratio_check(img_w, img_h):
     return img_w, img_h
 
 
-def get_xkcd():
+def getcomic_xkcd():
     '''
     Gets the most recent xkcd comic strip.
     '''
@@ -59,7 +59,7 @@ def get_xkcd():
     return link, now
 
 
-def get_lunch():
+def getcomic_lunch():
     '''
     Gets the most recent Lunch comic strip.
     '''
@@ -75,7 +75,7 @@ def get_lunch():
     return link, now
 
 
-def get_pondus():
+def getcomic_pondus():
     '''
     Gets the most recent Rocky comic strip.
     '''
@@ -91,7 +91,7 @@ def get_pondus():
     return link, now
 
 
-def get_dilbert():
+def getcomic_dilbert():
     '''
     Gets the most recent xkcd comic strip.
     '''
@@ -109,7 +109,7 @@ def get_dilbert():
     return link, now
 
 
-def get_rocky():
+def getcomic_rocky():
     '''
     Gets the most recent Rocky comic strip.
     '''
@@ -125,7 +125,7 @@ def get_rocky():
     return link, now
 
 
-def get_nemi():
+def getcomic_nemi():
     '''
     Gets the most recent Nemi comic strip.
     '''
@@ -141,7 +141,7 @@ def get_nemi():
     return link, now
 
 
-def get_zelda():
+def getcomic_zelda():
     '''
     Gets the most recent Zelda comic strip.
     '''
@@ -157,7 +157,7 @@ def get_zelda():
     return link, now
 
 
-def get_fagprat():
+def getcomic_fagprat():
     '''
     Gets the most recent Fagprat comic strip.
     '''
@@ -173,7 +173,7 @@ def get_fagprat():
     return link, now
 
 
-def get_dunce():
+def getcomic_dunce():
     '''
     Gets the most recent Dunce comic strip.
     '''
@@ -187,6 +187,14 @@ def get_dunce():
         link = False
     now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
     return link, now
+
+
+def all_comic_names(functions):
+    comicnames = []
+    for function in functions:
+        if re.search('^getcomic_(.*)', function):
+            comicnames.append(re.search('^getcomic_(.*)', function).group(1))
+    return comicnames
 
 
 def scrot(strip=False):
@@ -228,16 +236,15 @@ def scrot(strip=False):
     return temp_out
 
 # Fetch the newest comic
-comicname = ['lunch', 'pondus', 'xkcd', 'dilbert', 'rocky', 'nemi', 'zelda',
-             'fagprat', 'dunce']
 try:
     comic = str(sys.argv[1])
-    link = eval('get_{}()[0]'.format(comic))
-    now = eval('get_{}()[1]'.format(comic))
+    link = eval('getcomic_{}()[0]'.format(comic))
+    now = eval('getcomic_{}()[1]'.format(comic))
 except:
+    comicnames = all_comic_names(dir())
     comics = ''
-    for comic in comicname:
-        if comic == comicname[-1]:
+    for comic in comicnames:
+        if comic == comicnames[-1]:
             comics += 'and \'{}\''.format(comic)
         else:
             comics += '\'{}\', '.format(comic)
