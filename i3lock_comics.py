@@ -43,11 +43,13 @@ def ratio_check(img_w, img_h):
         img_h = int(img_h * ratio)
     return img_w, img_h
 
+now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
 
 def getcomic_xkcd():
     '''
-    Gets the most recent xkcd comic strip.
+    Gets the link to the most recent xkcd comic strip.
     '''
+    global now
     try:
         req = requests.get('http://xkcd.com')
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
@@ -55,14 +57,14 @@ def getcomic_xkcd():
         link = strip.find('img')['src'].replace('//', '')
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_lunch():
     '''
-    Gets the most recent Lunch comic strip.
+    Gets the link to the most recent Lunch comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/lunch/')
@@ -71,14 +73,14 @@ def getcomic_lunch():
             .find('img')['src']
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_pondus():
     '''
-    Gets the most recent Rocky comic strip.
+    Gets the link to the most recent Rocky comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/pondus/')
@@ -87,15 +89,14 @@ def getcomic_pondus():
             .find('img')['src']
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_dilbert():
     '''
-    Gets the most recent xkcd comic strip.
+    Gets the link to the most recent xkcd comic strip.
     '''
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+    global now
     try:
         req = requests.get('http://dilbert.com/strip/{}'.format(now))
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
@@ -106,13 +107,14 @@ def getcomic_dilbert():
         )['src']
     except(requests.ConnectionError):
         link = False
-    return link, now
+    return link
 
 
 def getcomic_rocky():
     '''
-    Gets the most recent Rocky comic strip.
+    Gets the link to the most recent Rocky comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/rocky/')
@@ -121,14 +123,14 @@ def getcomic_rocky():
             .find('img')['src']
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_nemi():
     '''
-    Gets the most recent Nemi comic strip.
+    Gets the link to the most recent Nemi comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/nemi/')
@@ -137,14 +139,14 @@ def getcomic_nemi():
             .find('img')['src']
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_zelda():
     '''
-    Gets the most recent Zelda comic strip.
+    Gets the link to the most recent Zelda comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/zelda-lille-berlin/')
@@ -153,30 +155,30 @@ def getcomic_zelda():
             .find('img')['src']
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_fagprat():
     '''
-    Gets the most recent Fagprat comic strip.
+    Gets the link to the most recent Fagprat comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/fagprat/')
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def getcomic_dunce():
     '''
-    Gets the most recent Dunce comic strip.
+    Gets the link to the most recent Dunce comic strip.
     '''
+    global now
     try:
         req = requests.get('http://www.dagbladet.medialaben.no'
                            '/tegneserie/dunce/')
@@ -185,8 +187,7 @@ def getcomic_dunce():
             .find('img')['src']
     except(requests.ConnectionError):
         link = False
-    now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
-    return link, now
+    return link
 
 
 def all_comic_names(functions):
