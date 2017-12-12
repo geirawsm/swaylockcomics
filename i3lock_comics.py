@@ -199,7 +199,10 @@ def all_comic_names(functions):
 
 def scrot(strip=False):
     # Take screenshot of screen and pixellize it
-    temp_out = '{}/out.png'.format(filedir)
+    temp_folder = '{}/temp'.format(filedir)
+    if not os.path.exists(temp_folder):
+            call(['mkdir', temp_folder])
+    temp_out = '{}/out.png'.format(temp_folder)
     call(['scrot', temp_out])
     scrot = Image.open(temp_out)
     scrot_w = int(float(scrot.size[0] * 0.1))
@@ -266,7 +269,6 @@ except:
     backup_strip = ''
 
 strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
-temp_strip = '{}/temp_strip.jpg'.format(filedir)
 if link is False:
     strips = backup_strip
 else:
