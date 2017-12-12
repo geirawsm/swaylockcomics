@@ -71,7 +71,7 @@ def getcomic_lunch():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
@@ -87,7 +87,7 @@ def getcomic_pondus():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
@@ -105,7 +105,7 @@ def getcomic_dilbert():
             'img',
             attrs={'class': 'img-responsive img-comic'}
         )['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
@@ -121,7 +121,7 @@ def getcomic_rocky():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
@@ -137,7 +137,7 @@ def getcomic_nemi():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
@@ -153,7 +153,7 @@ def getcomic_zelda():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
@@ -185,7 +185,7 @@ def getcomic_dunce():
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         link = soup.find('a', attrs={'class': 'strip-container'})\
             .find('img')['src']
-    except(requests.ConnectionError):
+    except:
         link = False
     return link
 
