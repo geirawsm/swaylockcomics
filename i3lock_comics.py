@@ -199,7 +199,7 @@ def all_comic_names(functions):
 
 
 def scrot(strip=False):
-    # Take screenshot of screen and pixellize it
+    # Take screenshot of screen and pixelize it, save it
     temp_folder = '{}/temp'.format(filedir)
     if not os.path.exists(temp_folder):
             call(['mkdir', temp_folder])
@@ -241,10 +241,12 @@ def scrot(strip=False):
 
 # Fetch the newest comic
 try:
+    # Get comic name as argument
     comic = str(sys.argv[1])
     link = eval('getcomic_{}()[0]'.format(comic))
     now = eval('getcomic_{}()[1]'.format(comic))
 except:
+    # If it can't get comic name as an argument, show error message
     comicnames = all_comic_names(dir())
     comics = ''
     for comic in comicnames:
@@ -257,7 +259,10 @@ except:
           .format(os.path.basename(__file__), comics))
     sys.exit()
 
+# Get the folder for the script
 filedir = os.path.dirname(os.path.abspath(__file__))
+
+# Set folder for the images saved by the script
 strips_folder = '{}/strips/'.format(filedir)
 temp_files = sorted(os.listdir(strips_folder))
 try:
@@ -270,9 +275,12 @@ except:
     backup_strip = ''
 
 strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+
+# Make a failsafe in case it can't fetch a comic strip at all
 if link is False:
     strips = backup_strip
 else:
+    # ...but if all is ok, continue.
     # Check to see if the latest comic is already in place
     if not os.path.exists(strip):
         if not os.path.exists(strips_folder):
