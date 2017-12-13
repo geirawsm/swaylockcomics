@@ -287,28 +287,28 @@ else:
     if not os.path.exists(strip):
         if not os.path.exists(strips_folder):
             call(['mkdir', strips_folder])
-    curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
-                 '5', '--max-time', '5'])
-    # If curl fails in any way, use the latest strip from same
-    # comic.
-    # Code 6 from curl is 'Could not resolve host'. Not much to
-    # do about this, but the script should have a failsafe
-    if curl is 6:
-        strip = backup_strip
-        # Debug
-        print('error 6: make backup strip')
-    # If curl get code 22 (basically a 404), try previous dates
-    if curl == 22:
-        # Debug
-        print('error 22: 404, check earlier strips')
-        i = 0
-        while curl is 22:
-            i += 1
-            link = eval('get_{}(days={})[0]'.format(comic, i))
-            now = eval('get_{}(days={})[1]'.format(comic, i))
-            strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
-            curl = call(['curl', '-f', link, '-o', strips])
-            continue
+        curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
+                     '5', '--max-time', '5'])
+        # If curl fails in any way, use the latest strip from same
+        # comic.
+        # Code 6 from curl is 'Could not resolve host'. Not much to
+        # do about this, but the script should have a failsafe
+        if curl is 6:
+            strip = backup_strip
+            # Debug
+            print('error 6: make backup strip')
+        # If curl get code 22 (basically a 404), try previous dates
+        if curl == 22:
+            # Debug
+            print('error 22: 404, check earlier strips')
+            i = 0
+            while curl is 22:
+                i += 1
+                link = eval('get_{}(days={})[0]'.format(comic, i))
+                now = eval('get_{}(days={})[1]'.format(comic, i))
+                strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+                curl = call(['curl', '-f', link, '-o', strips])
+                continue
 
 
 # Run lock file
