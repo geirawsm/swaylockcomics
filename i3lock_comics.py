@@ -8,6 +8,7 @@ import re
 import requests
 from bs4 import BeautifulSoup as bs
 import json
+import glob
 import sys
 
 from screeninfo import get_monitors
@@ -223,7 +224,7 @@ def scrot(strip=False):
             img_w = new_size[0]
             img_h = new_size[1]
             img = img.resize((img_w, img_h), Image.ANTIALIAS)
-            img.convert('RGB').save(temp_strip)
+            img.convert('RGB').save(strip)
             # Make sure comic is placed on the primary screen
             img_w = img.size[0]
             img_h = img.size[1]
@@ -239,8 +240,6 @@ def scrot(strip=False):
 try:
     # Get comic name as argument
     comic = str(sys.argv[1])
-    link = eval('getcomic_{}()[0]'.format(comic))
-    now = eval('getcomic_{}()[1]'.format(comic))
 except:
     # If it can't get comic name as an argument, show error message
     comicnames = all_comic_names(dir())
@@ -260,58 +259,68 @@ filedir = os.path.dirname(os.path.abspath(__file__))
 
 # Set folder for the images saved by the script
 strips_folder = '{}/strips/'.format(filedir)
-temp_files = sorted(os.listdir(strips_folder))
-try:
-    backup_strip = temp_files[0]
-    for i in temp_files:
-        if comic in i:
-            backup_strip = i
-            break
-except:
-    backup_strip = ''
 
+# Get a listing of the files in 'strips_folder'
+strips_files = glob.glob('strips/*.*')
+backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
+
+# Set a backup comic strip, you know, just in case
+for file in strips_files:
+    if comic in file:
+        backup_strip = '{}/{}'.format(filedir, file)
+        break
+    else:
+        backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
+
+# Get the link for today's strip as chosen
+link = eval('getcomic_{}()'.format(comic))
+
+# Set filename for comic strip to be saved
 strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
 
 # Make a failsafe in case it can't fetch a comic strip at all
 if link is False:
-    strips = backup_strip
+    strip = backup_strip
 else:
     # ...but if all is ok, continue.
     # Check to see if the latest comic is already in place
     if not os.path.exists(strip):
         if not os.path.exists(strips_folder):
             call(['mkdir', strips_folder])
-        else:
-            curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout', '3'])
-            if curl == 6:
-                print('Couldn\'t resolve the host for download comic. Is your '
-                      'internet ok?')
-                call(['i3lock', '-i', scrot()])
-            # If curl get code 28 (timeout), use the latest strip from same comic
-            if curl == 28:
-                strip = backup_strip
-            # If curl get code 22 (basically a 404), try previous dates
-            i = 0
-            while curl == 22:
-                i += 1
-                link = eval('get_{}(days={})[0]'.format(comic, i))
-                now = eval('get_{}(days={})[1]'.format(comic, i))
-                strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
-                curl = call(['curl', '-f', link, '-o', strips])
-                continue
+    curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
+                 '5', '--max-time', '5'])
+    # If curl fails in any way, use the latest strip from same
+    # comic.
+    # Code 6 from curl is 'Could not resolve host'. Not much to
+    # do about this, but the script should have a failsafe
+    if curl is 6:
+        strip = backup_strip
+        # Debug
+        print('error 6: make backup strip')
+    # If curl get code 22 (basically a 404), try previous dates
+    if curl == 22:
+        # Debug
+        print('error 22: 404, check earlier strips')
+        i = 0
+        while curl is 22:
+            i += 1
+            link = eval('get_{}(days={})[0]'.format(comic, i))
+            now = eval('get_{}(days={})[1]'.format(comic, i))
+            strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+            curl = call(['curl', '-f', link, '-o', strips])
+            continue
 
-temp_out = scrot(strip)
 
 # Run lock file
 call(['i3lock', '-i', scrot(strip)])
 
 # Maintain all the strips: keep max 5 strips at a time
 # Make sure that only the images are deleted, not other files/folders
-for file in temp_files:
+for file in strips_files:
     if '.jpg' not in file:
-        temp_files.remove(file)
+        strips_files.remove(file)
 # Only keep the 5 newest files
-if len(temp_files) > 5:
-    clean_number = len(temp_files) - 5 - 1
-    for i in temp_files[0:clean_number]:
+if len(strips_files) > 5:
+    clean_number = len(strips_files) - 5 - 1
+    for i in strips_files[0:clean_number]:
         os.remove('{}{}'.format(strips_folder, i))
