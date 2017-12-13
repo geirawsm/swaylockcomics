@@ -91,7 +91,7 @@ def getcomic_pondus():
 
 def getcomic_dilbert():
     '''
-    Gets the link to the most recent xkcd comic strip.
+    Gets the link to the most recent Dilbert comic strip.
     '''
     global now
     try:
