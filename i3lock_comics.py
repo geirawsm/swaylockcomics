@@ -7,6 +7,7 @@ from PIL import Image
 import re
 import requests
 from bs4 import BeautifulSoup as bs
+import json
 import sys
 
 from screeninfo import get_monitors
@@ -49,14 +50,9 @@ def getcomic_xkcd():
     '''
     Gets the link to the most recent xkcd comic strip.
     '''
-    global now
-    try:
-        req = requests.get('http://xkcd.com')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        strip = soup.find('div', attrs={'id': 'comic'})
-        link = strip.find('img')['src'].replace('//', '')
-    except(requests.ConnectionError):
-        link = False
+    current_strip = requests.get('https://xkcd.com/info.0.json')
+    current_json = json.loads(current_strip.text)
+    link = current_json['img']
     return link
 
 
