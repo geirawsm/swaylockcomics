@@ -187,6 +187,70 @@ def getcomic_dunce():
     return link
 
 
+def getcomic_commitstrip():
+    '''
+    Gets the link to the most recent CommitStrip comic strip.
+    '''
+    try:
+        req = requests.get('http://www.commitstrip.com/en/feed/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8").find_all('item')[0]
+        link = soup.find('content:encoded').find('img')['src']
+    except:
+        link = False
+    return link
+
+
+def getcomic_pvp():
+    '''
+    Gets the link to the most recent PvP comic strip.
+    '''
+    global now
+    try:
+        req = requests.get('http://pvponline.com/comic')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('section', attrs={'class': 'comic-art'})\
+            .find('img')['src']
+    except:
+        link = False
+    return link
+
+
+def getcomic_vgcats():
+    '''
+    Gets the link to the most recent VG Cats comic strip.
+    '''
+    global now
+    try:
+        url = 'http://www.vgcats.com/comics/'
+        req = requests.get(url)
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        imgs = soup.find_all('img')
+        regex = r'\bimages\/\d+\.jpg\b'
+        for img in imgs:
+            if re.search(regex, img['src']):
+                link = '{}{}'.format(url, img['src'])
+                pass
+    except:
+        link = False
+    return link
+
+
+def getcomic_dinosaurcomics():
+    '''
+    Gets the link to the most recent Dinosaur Comics comic strip.
+    '''
+    global now
+    try:
+        req = requests.get('http://www.qwantz.com/rssfeed.php')
+        soup = bs(req.content, 'html5lib', from_encoding="iso-5589-1")
+        imgs = soup.find_all('item')
+        link = re.search(r'img src=\"(.*\.png)', str(imgs[0])).group(1)
+    except:
+        print('failed')
+        link = False
+    return link
+
+
 def all_comic_names(functions):
     comicnames = []
     for function in functions:
