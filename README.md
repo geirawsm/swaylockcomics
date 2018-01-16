@@ -30,6 +30,8 @@ Comics supported:
 ## How to use
 
 Run the script by passing a comic as the first variable, like so: `./i3lock_comics.py lunch`
+If you don't have any preference, just run `./i3lock_comics.py` to get a random comic.
+
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
 If the script can't fetch a comic because of net problems, it will use a previous strip from the same comic, if it can find one in the `strips`-folder.

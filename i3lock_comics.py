@@ -9,6 +9,7 @@ import requests
 from bs4 import BeautifulSoup as bs
 import json
 import glob
+from random import randint
 import sys
 
 from screeninfo import get_monitors
@@ -300,13 +301,22 @@ def scrot(strip=False):
             scrot.save(temp_out)
     return temp_out
 
+
 # Fetch the newest comic
+comicnames = all_comic_names(dir())
+
 try:
+    random = False
     # Get comic name as argument
-    comic = str(sys.argv[1])
+    try:
+        comic = str(sys.argv[1])
+        if comic == 'random':
+            random = True
+    except(IndexError):
+        random = True
+        comic = 'random'
 except:
     # If it can't get comic name as an argument, show error message
-    comicnames = all_comic_names(dir())
     comics = ''
     for comic in comicnames:
         if comic == comicnames[-1]:
@@ -324,20 +334,27 @@ filedir = os.path.dirname(os.path.abspath(__file__))
 # Set folder for the images saved by the script
 strips_folder = '{}/strips/'.format(filedir)
 
+# Get the link for today's strip as chosen
+if random:
+    link = eval('getcomic_{}()'.format(
+        comicnames[randint(0, len(comicnames) - 1)]))
+else:
+    try:
+        link = eval('getcomic_{}()'.format(comic))
+    except:
+        link = False
+
 # Get a listing of the files in 'strips_folder'
 strips_files = glob.glob('strips/*.*')
 backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
 
 # Set a backup comic strip, you know, just in case
 for file in strips_files:
-    if comic in file:
+    if comic in file or random is False:
         backup_strip = '{}/{}'.format(filedir, file)
         break
     else:
         backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
-
-# Get the link for today's strip as chosen
-link = eval('getcomic_{}()'.format(comic))
 
 # Set filename for comic strip to be saved
 strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
@@ -387,4 +404,4 @@ for file in strips_files:
 if len(strips_files) > 5:
     clean_number = len(strips_files) - 5 - 1
     for i in strips_files[0:clean_number]:
-        os.remove('{}{}'.format(strips_folder, i))
+        os.remove(i)
