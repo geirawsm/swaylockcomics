@@ -35,7 +35,7 @@ If you don't have any preference, just run `./i3lock_comics.py` to get a random 
 
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
-If the script can't fetch a comic because of net problems, it will use a previous strip from the same comic, if it can find one in the `strips`-folder.
+If the script can't fetch a comic because of connection issues, it will use a previous strip from the same comic, if it can find one in the `strips`-folder.
 If there is no net and no cached comic strip available, the script will use XKCD's password-strip as default.
 
 (This seems to be OK according to [Mr. xkcd himself](https://xkcd.com/about):
@@ -50,6 +50,7 @@ But Randall, if I'm mistaken, please let me know.)
 ## Dependencies:
 - i3lock
 - scrot
+- json
 - curl (called by the subprocess module)
 - pendulum
 - requests

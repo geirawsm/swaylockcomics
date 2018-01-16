@@ -48,6 +48,7 @@ def ratio_check(img_w, img_h):
 
 now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
 
+
 def getcomic_xkcd():
     '''
     Gets the link to the most recent xkcd comic strip.
