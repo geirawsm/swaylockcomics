@@ -22,10 +22,11 @@ Comics supported:
 - Zelda (no)
 - Fagprat (no)
 - Dunce (no)
-- CommitStrip ^NEW
-- PvP ^NEW
-- VG Cats ^NEW
-- Dinosaur Comics ^NEW
+- CommitStrip
+- PvP
+- VG Cats
+- Dinosaur Comics
+- Livet Blant Dyrene (no) - new!
 
 ## How to use
 

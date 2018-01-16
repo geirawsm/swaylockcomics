@@ -252,6 +252,20 @@ def getcomic_dinosaurcomics():
     return link
 
 
+def getcomic_livetblantdyrene():
+    '''
+    Gets the link to the most recent Livet Blant Dyrene comic strip.
+    '''
+    global now
+    try:
+        req = requests.get('https://www.livetblantdyrene.no/')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find_all('article')[0].find('div', attrs={'class': 'entry-content'}).find('a')['href']
+    except:
+        link = False
+    return link
+
+
 def all_comic_names(functions):
     comicnames = []
     for function in functions:
