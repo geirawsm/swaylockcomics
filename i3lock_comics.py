@@ -130,18 +130,6 @@ def getcomic_nemi():
     try:
         req = requests.get('https://www.dagbladet.no/tegneserie/nemi')
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-
-def getcomic_zelda():
-    '''
-    Gets the link to the most recent Zelda comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('http://www.dagbladet.medialaben.no'
-                           '/tegneserie/zelda-lille-berlin/')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('a', attrs={'class': 'strip-container'})\
-            .find('img')['src']
         link = soup.find('article', attrs={'class': 'todays'})\
             .find('a', attrs={'class': 'strip-container'}).find('img')['src']
     except:
@@ -155,20 +143,8 @@ def getcomic_fagprat():
     '''
     global now
     try:
-
-
-def getcomic_dunce():
-    '''
-    Gets the link to the most recent Dunce comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('http://www.dagbladet.medialaben.no'
-                           '/tegneserie/dunce/')
         req = requests.get('https://www.dagbladet.no/tegneserie/fagprat')
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('a', attrs={'class': 'strip-container'})\
-            .find('img')['src']
         link = soup.find('article', attrs={'class': 'todays'})\
             .find('a', attrs={'class': 'strip-container'}).find('img')['src']
     except:
