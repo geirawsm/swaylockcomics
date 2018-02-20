@@ -258,6 +258,9 @@ def all_comic_names():
     return comicnames
 
 
+comicnames = all_comic_names()
+
+
 def scrot(strip=False):
     # Take screenshot of screen and pixelize it, save it
     temp_folder = '{}/temp'.format(filedir)
