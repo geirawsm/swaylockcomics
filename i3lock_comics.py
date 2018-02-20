@@ -232,7 +232,7 @@ def getcomic_livetblantdyrene():
 
 def getcomic_lilleberlin():
     '''
-    Gets the link to the most recent Zelda comic strip.
+    Gets the link to the most recent Lille Berlin comic strip.
     '''
     global now
     try:
@@ -256,6 +256,9 @@ def all_comic_names():
         if re.search('^getcomic_(.*)', comicname):
             comicnames.append(re.search('^getcomic_(.*)', comicname).group(1))
     return comicnames
+
+
+comicnames = all_comic_names()
 
 
 def scrot(strip=False):
