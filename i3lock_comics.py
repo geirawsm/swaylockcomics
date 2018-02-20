@@ -231,6 +231,19 @@ def getcomic_livetblantdyrene():
 
 
 def all_comic_names(functions):
+def getcomic_lilleberlin():
+    '''
+    Gets the link to the most recent Zelda comic strip.
+    '''
+    global now
+    try:
+        req = requests.get('https://www.dagbladet.no/tegneserie/lille-berlin')
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        link = soup.find('article', attrs={'class': 'todays'})\
+            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
+    except:
+        link = False
+    return link
     comicnames = []
     for function in functions:
         if re.search('^getcomic_(.*)', function):
