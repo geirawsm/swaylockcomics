@@ -230,7 +230,6 @@ def getcomic_livetblantdyrene():
     return link
 
 
-def all_comic_names(functions):
 def getcomic_lilleberlin():
     '''
     Gets the link to the most recent Zelda comic strip.
@@ -244,10 +243,18 @@ def getcomic_lilleberlin():
     except:
         link = False
     return link
+
+
+# Make all functions available for 'all_comic_names'
+_funcs = dir()
+
+
+def all_comic_names():
     comicnames = []
-    for function in functions:
-        if re.search('^getcomic_(.*)', function):
-            comicnames.append(re.search('^getcomic_(.*)', function).group(1))
+    global _funcs
+    for comicname in _funcs:
+        if re.search('^getcomic_(.*)', comicname):
+            comicnames.append(re.search('^getcomic_(.*)', comicname).group(1))
     return comicnames
 
 
@@ -294,15 +301,21 @@ def scrot(strip=False):
 
 
 # Fetch the newest comic
-comicnames = all_comic_names(dir())
-
 try:
     random = False
+    test = False
+    test_comic = False
     # Get comic name as argument
     try:
         comic = str(sys.argv[1])
         if comic == 'random':
             random = True
+        if comic == 'test':
+            test = True
+            try:
+                test_comic = str(sys.argv[2])
+            except:
+                pass
     except(IndexError):
         random = True
         comic = 'random'
@@ -318,6 +331,30 @@ except:
           ' lunch\'. You can chose between {}.'
           .format(os.path.basename(__file__), comics))
     sys.exit()
+
+# If run as test, test all the comic fetching
+if test:
+    if test_comic:
+        link = eval('getcomic_{}()'.format(test_comic))
+        print('{}: {}'.format(test_comic, link))
+    elif test_comic is False:
+        false_comics = []
+        for comic in all_comic_names():
+            link = eval('getcomic_{}()'.format(comic))
+            if link is not False:
+                print('{}: {}'.format(comic, link))
+            else:
+                false_comics.append(comic)
+        if len(false_comics) > 0:
+            false_text = 'These comics returned false on the links: '
+            for comic in false_comics:
+                if comic == false_comics[-1]:
+                    false_text += 'and \'{}\'.'.format(comic)
+                else:
+                    false_text += '\'{}\', '.format(comic)
+            print(false_text)
+    sys.exit()
+
 
 # Get the folder for the script
 filedir = os.path.dirname(os.path.abspath(__file__))
