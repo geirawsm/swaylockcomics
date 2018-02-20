@@ -19,14 +19,15 @@ Comics supported:
 - Dilbert
 - Rocky (no)
 - Nemi (no)
-- Zelda (no)
+~~- Zelda (no)~~
 - Fagprat (no)
-- Dunce (no)
+~~- Dunce (no)~~
 - CommitStrip
 - PvP
 - VG Cats
 - Dinosaur Comics
-- Livet Blant Dyrene (no) - new!
+- Livet Blant Dyrene (no)
+- Lille Berlin (no) - new!
 
 ## How to use
 
@@ -44,6 +45,10 @@ If there is no net and no cached comic strip available, the script will use XKCD
 >"You can post xkcd in your blog (whether ad-supported or not) with no need to get my permission."
 
 But Randall, if I'm mistaken, please let me know.)
+
+If you need to test if the comics are fetched properly, you can run `./i3lock_comics.py test` to see which comics can process perfectly (and returns an url to the comic) and which comics that fails (listed in the end of the print).
+
+If you want to test a specific comic, run `./i3lock_comics.py test lunch`.
 
 
 
