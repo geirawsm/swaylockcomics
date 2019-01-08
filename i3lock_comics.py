@@ -46,7 +46,7 @@ def ratio_check(img_w, img_h):
         img_h = int(img_h * ratio)
     return img_w, img_h
 
-now = pendulum.now().format('YYYY-MM-DD', formatter='alternative')
+now = pendulum.now().format('YYYY-MM-DD')
 
 
 def getcomic_xkcd():
