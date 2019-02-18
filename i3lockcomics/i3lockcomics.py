@@ -377,7 +377,7 @@ else:
 
 # Get a listing of the files in 'strips_folder'
 strips_files = glob.glob('strips/*.*')
-backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
+backup_strip = '{}/xkcd.png'.format(filedir)
 
 # Set a backup comic strip, you know, just in case
 for file in strips_files:
