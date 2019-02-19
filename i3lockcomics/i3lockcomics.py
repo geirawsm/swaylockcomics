@@ -6,11 +6,11 @@ from subprocess import call
 from PIL import Image
 import re
 import requests
-from bs4 import BeautifulSoup as bs
 import json
 import glob
 from random import randint
 import sys
+import i3lockcomics._getcomics as _getcomics
 
 from screeninfo import get_monitors
 monitors = get_monitors()
@@ -46,219 +46,8 @@ def ratio_check(img_w, img_h):
         img_h = int(img_h * ratio)
     return img_w, img_h
 
+
 now = pendulum.now().format('YYYY-MM-DD')
-
-
-def getcomic_xkcd():
-    '''
-    Gets the link to the most recent xkcd comic strip.
-    '''
-    current_strip = requests.get('https://xkcd.com/info.0.json')
-    current_json = json.loads(current_strip.text)
-    link = current_json['img']
-    return link
-
-
-def getcomic_lunch():
-    '''
-    Gets the link to the most recent Lunch comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.dagbladet.no/tegneserie/lunch')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('article', attrs={'class': 'todays'})\
-            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_pondus():
-    '''
-    Gets the link to the most recent Rocky comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.dagbladet.no/tegneserie/pondus')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('article', attrs={'class': 'todays'})\
-            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_dilbert():
-    '''
-    Gets the link to the most recent Dilbert comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('http://dilbert.com/strip/{}'.format(now))
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        strip = soup.find('div', attrs={'class': 'img-comic-container'})
-        link = strip.find(
-            'img',
-            attrs={'class': 'img-responsive img-comic'}
-        )['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_rocky():
-    '''
-    Gets the link to the most recent Rocky comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.dagbladet.no/tegneserie/rocky')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('article', attrs={'class': 'todays'})\
-            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_nemi():
-    '''
-    Gets the link to the most recent Nemi comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.dagbladet.no/tegneserie/nemi')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('article', attrs={'class': 'todays'})\
-            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_fagprat():
-    '''
-    Gets the link to the most recent Fagprat comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.dagbladet.no/tegneserie/fagprat')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('article', attrs={'class': 'todays'})\
-            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_commitstrip():
-    '''
-    Gets the link to the most recent CommitStrip comic strip.
-    '''
-    try:
-        req = requests.get('http://www.commitstrip.com/en/feed/')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8").find_all('item')[0]
-        link = soup.find('content:encoded').find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_pvp():
-    '''
-    Gets the link to the most recent PvP comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('http://pvponline.com/comic')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('section', attrs={'class': 'comic-art'})\
-            .find('img')['src']
-    except:
-        link = False
-    return link
-
-
-def getcomic_vgcats():
-    '''
-    Gets the link to the most recent VG Cats comic strip.
-    '''
-    global now
-    try:
-        url = 'http://www.vgcats.com/comics/'
-        req = requests.get(url)
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        imgs = soup.find_all('img')
-        regex = r'\bimages\/\d+\.jpg\b'
-        for img in imgs:
-            if re.search(regex, img['src']):
-                link = '{}{}'.format(url, img['src'])
-                pass
-    except:
-        link = False
-    return link
-
-
-def getcomic_dinosaurcomics():
-    '''
-    Gets the link to the most recent Dinosaur Comics comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('http://www.qwantz.com/rssfeed.php')
-        soup = bs(req.content, 'html5lib', from_encoding="iso-5589-1")
-        imgs = soup.find_all('item')
-        link = re.search(r'img src=\"(.*\.png)', str(imgs[0])).group(1)
-    except:
-        print('failed')
-        link = False
-    return link
-
-
-def getcomic_livetblantdyrene():
-    '''
-    Gets the link to the most recent Livet Blant Dyrene comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.livetblantdyrene.no/')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find_all('article')[0].find('div', attrs={'class': 'entry-content'}).find('a')['href']
-    except:
-        link = False
-    return link
-
-
-def getcomic_lilleberlin():
-    '''
-    Gets the link to the most recent Lille Berlin comic strip.
-    '''
-    global now
-    try:
-        req = requests.get('https://www.dagbladet.no/tegneserie/lille-berlin')
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        link = soup.find('article', attrs={'class': 'todays'})\
-            .find('a', attrs={'class': 'strip-container'}).find('img')['src']
-    except:
-        link = False
-    return link
-
-
-# Make all functions available for 'all_comic_names'
-_funcs = dir()
-
-
-def all_comic_names():
-    comicnames = []
-    global _funcs
-    for comicname in _funcs:
-        if re.search('^getcomic_(.*)', comicname):
-            comicnames.append(re.search('^getcomic_(.*)', comicname).group(1))
-    return comicnames
-
-
-comicnames = all_comic_names()
 
 
 def scrot(strip=False):
@@ -324,15 +113,10 @@ try:
         comic = 'random'
 except:
     # If it can't get comic name as an argument, show error message
-    comics = ''
-    for comic in comicnames:
-        if comic == comicnames[-1]:
-            comics += 'and \'{}\''.format(comic)
-        else:
-            comics += '\'{}\', '.format(comic)
     print('Couldn\'t find a comic. Run the script like this \'python {}'
-          ' lunch\'. You can chose between {}.'
-          .format(os.path.basename(__file__), comics))
+          ' lunch\'.'
+          .format(os.path.basename(__file__)))
+    _getcomics.print_comic_list()
     sys.exit()
 
 # If run as test, test all the comic fetching
@@ -342,7 +126,7 @@ if test:
         print('{}: {}'.format(test_comic, link))
     elif test_comic is False:
         false_comics = []
-        for comic in all_comic_names():
+        for comic in _getcomics.comics():
             link = eval('getcomic_{}()'.format(comic))
             if link is not False:
                 print('{}: {}'.format(comic, link))
@@ -367,11 +151,10 @@ strips_folder = '{}/strips/'.format(filedir)
 
 # Get the link for today's strip as chosen
 if random:
-    link = eval('getcomic_{}()'.format(
-        comicnames[randint(0, len(comicnames) - 1)]))
+    link = _getcomics.comics()[randint(0, len(_getcomics.comics()) - 1)]
 else:
     try:
-        link = eval('getcomic_{}()'.format(comic))
+        link = _getcomics.comics(comic)
     except:
         link = False
 
