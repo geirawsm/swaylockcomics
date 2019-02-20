@@ -1,3 +1,4 @@
-strips/*
-temp/*
+*/strips/*
+*/temp/*
 *.backup
+*.pyc

@@ -10,6 +10,7 @@ import json
 import glob
 from random import randint
 import sys
+from i3lockcomics._args import args as args
 import i3lockcomics._getcomics as _getcomics
 
 from screeninfo import get_monitors
@@ -30,6 +31,9 @@ for monitor in monitors:
 max_screen_estate = 0.8
 max_w = int(int(mon_w) * max_screen_estate)
 max_h = int(int(mon_h) * max_screen_estate)
+
+# Get the folder for the script
+filedir = os.path.dirname(os.path.abspath(__file__))
 
 
 def ratio_check(img_w, img_h):
@@ -92,130 +96,82 @@ def scrot(strip=False):
     return temp_out
 
 
-# Fetch the newest comic
-try:
-    random = False
-    test = False
-    test_comic = False
-    # Get comic name as argument
-    try:
-        comic = str(sys.argv[1])
-        if comic == 'random':
-            random = True
-        if comic == 'test':
-            test = True
-            try:
-                test_comic = str(sys.argv[2])
-            except:
-                pass
-    except(IndexError):
-        random = True
-        comic = 'random'
-except:
-    # If it can't get comic name as an argument, show error message
-    print('Couldn\'t find a comic. Run the script like this \'python {}'
-          ' lunch\'.'
-          .format(os.path.basename(__file__)))
-    _getcomics.print_comic_list()
-    sys.exit()
+def main():
+    global args, _getcomics
+    comics = _getcomics.comics()
+    now = _getcomics.now
+    # Fetch the newest comic, either the chosen one or a random one
+    if not args.comic:
+        args.comic = _getcomics.comic_names[randint(0, len(
+            _getcomics.comic_names) - 1)]
+    link = _getcomics.comics(comic=args.comic)
+    print('Got link: {}'.format(link))
 
-# If run as test, test all the comic fetching
-if test:
-    if test_comic:
-        link = eval('getcomic_{}()'.format(test_comic))
-        print('{}: {}'.format(test_comic, link))
-    elif test_comic is False:
-        false_comics = []
-        for comic in _getcomics.comics():
-            link = eval('getcomic_{}()'.format(comic))
-            if link is not False:
-                print('{}: {}'.format(comic, link))
-            else:
-                false_comics.append(comic)
-        if len(false_comics) > 0:
-            false_text = 'These comics returned false on the links: '
-            for comic in false_comics:
-                if comic == false_comics[-1]:
-                    false_text += 'and \'{}\'.'.format(comic)
-                else:
-                    false_text += '\'{}\', '.format(comic)
-            print(false_text)
-    sys.exit()
+    # Set folder for the images saved by the script
+    strips_folder = '{}/strips/'.format(filedir)
 
+    # Get a listing of the files in 'strips_folder'
+    strips_files = glob.glob('strips/*.*')
+    backup_strip = '{}/xkcd.png'.format(filedir)
 
-# Get the folder for the script
-filedir = os.path.dirname(os.path.abspath(__file__))
+    # Set a backup comic strip, you know, just in case
+    for file in strips_files:
+        if args.comic in file:
+            backup_strip = '{}/{}'.format(filedir, file)
+            break
+        else:
+            backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
 
-# Set folder for the images saved by the script
-strips_folder = '{}/strips/'.format(filedir)
-
-# Get the link for today's strip as chosen
-if random:
-    link = _getcomics.comics()[randint(0, len(_getcomics.comics()) - 1)]
-else:
-    try:
-        link = _getcomics.comics(comic)
-    except:
-        link = False
-
-# Get a listing of the files in 'strips_folder'
-strips_files = glob.glob('strips/*.*')
-backup_strip = '{}/xkcd.png'.format(filedir)
-
-# Set a backup comic strip, you know, just in case
-for file in strips_files:
-    if comic in file or random is False:
-        backup_strip = '{}/{}'.format(filedir, file)
-        break
-    else:
-        backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
-
-# Set filename for comic strip to be saved
-strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+    # Set filename for comic strip to be saved
+    strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
 
 # Make a failsafe in case it can't fetch a comic strip at all
-if link is False:
-    strip = backup_strip
-else:
-    # ...but if all is ok, continue.
-    # Check to see if the latest comic is already in place
-    if not os.path.exists(strip):
-        if not os.path.exists(strips_folder):
-            call(['mkdir', strips_folder])
-        curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
-                     '5', '--max-time', '5'])
-        # If curl fails in any way, use the latest strip from same
-        # comic.
-        # Code 6 from curl is 'Could not resolve host'. Not much to
-        # do about this, but the script should have a failsafe
-        if curl is 6:
-            strip = backup_strip
-            # Debug
-            print('error 6: make backup strip')
-        # If curl get code 22 (basically a 404), try previous dates
-        if curl == 22:
-            # Debug
-            print('error 22: 404, check earlier strips')
-            i = 0
-            while curl is 22:
-                i += 1
-                link = eval('get_{}(days={})[0]'.format(comic, i))
-                now = eval('get_{}(days={})[1]'.format(comic, i))
-                strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
-                curl = call(['curl', '-f', link, '-o', strips])
-                continue
+    if link is False:
+        strip = backup_strip
+    else:
+        # ...but if all is ok, continue.
+        # Check to see if the latest comic is already in place
+        if not os.path.exists(strip):
+            if not os.path.exists(strips_folder):
+                call(['mkdir', strips_folder])
+            curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
+                         '5', '--max-time', '5'])
+            # If curl fails in any way, use the latest strip from same
+            # comic.
+            # Code 6 from curl is 'Could not resolve host'. Not much to
+            # do about this, but the script should have a failsafe
+            if curl is 6:
+                strip = backup_strip
+                # Debug
+                print('error 6: make backup strip')
+            # If curl get code 22 (basically a 404), try previous dates
+            if curl == 22:
+                # Debug
+                print('error 22: 404, check earlier strips')
+                i = 0
+                while curl is 22:
+                    i += 1
+                    link = eval('get_{}(days={})[0]'.format(comic, i))
+                    now = eval('get_{}(days={})[1]'.format(comic, i))
+                    strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
+                    curl = call(['curl', '-f', link, '-o', strips])
+                    continue
 
 
-# Run lock file
-call(['i3lock', '-i', scrot(strip)])
+    # Run lock file
+    call(['i3lock', '-i', scrot(strip)])
 
-# Maintain all the strips: keep max 5 strips at a time
-# Make sure that only the images are deleted, not other files/folders
-for file in strips_files:
-    if '.jpg' not in file:
-        strips_files.remove(file)
-# Only keep the 5 newest files
-if len(strips_files) > 5:
-    clean_number = len(strips_files) - 5 - 1
-    for i in strips_files[0:clean_number]:
-        os.remove(i)
+    # Maintain all the strips: keep max 5 strips at a time
+    # Make sure that only the images are deleted, not other files/folders
+    for file in strips_files:
+        if '.jpg' not in file:
+            strips_files.remove(file)
+    # Only keep the 5 newest files
+    if len(strips_files) > 5:
+        clean_number = len(strips_files) - 5 - 1
+        for i in strips_files[0:clean_number]:
+            os.remove(i)
+
+
+if __name__ == '__main__':
+    main()
