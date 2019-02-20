@@ -6,6 +6,11 @@ parser = argparse.ArgumentParser()
 parser.prog = 'i3lockcomics'
 parser.description = 'Lock your screen AND show a comic at the same '\
                      'time'
+parser.add_argument('-v', '--verbose',
+                    help='Verbose mode',
+                    action='store_true',
+                    default=False,
+                    dest='verbose')
 parser.add_argument('-c', '--comic',
                     help='Chose what comic to use. '
                     'If no comic is called it will randomize.',
