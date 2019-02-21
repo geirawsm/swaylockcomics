@@ -5,11 +5,8 @@ import os
 from subprocess import call
 from PIL import Image, ImageFilter
 import re
-import requests
-import json
 import glob
 from random import randint
-import sys
 from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv
 import i3lockcomics._getcomics as _getcomics
