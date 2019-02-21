@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
+from i3lockcomics.__version__ import version
 
 parser = argparse.ArgumentParser()
 parser.prog = 'i3lockcomics'
 parser.description = 'Lock your screen AND show a comic at the same '\
                      'time'
+parser.add_argument('--version', '-V',
+                    action='version',
+                    version='%(prog)s {version}'.
+                    format(version=version))
 parser.add_argument('-v', '--verbose',
                     help='Verbose mode',
                     action='store_true',

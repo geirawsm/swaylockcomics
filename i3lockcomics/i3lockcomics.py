@@ -33,8 +33,13 @@ max_screen_estate = 0.8
 max_w = int(int(mon_w) * max_screen_estate)
 max_h = int(int(mon_h) * max_screen_estate)
 
-# Get the folder for the script
-filedir = os.path.dirname(os.path.abspath(__file__))
+# Get the folder for the script's cache
+cachedir = os.path.expanduser('~/.cache/i3lockcomics')
+if not os.path.exists(cachedir):
+    call(['mkdir', cachedir])
+printv('Setting script directory to \'{}\''.format(cachedir))
+sysdir = os.path.dirname(os.path.realpath(__file__))
+printv('Getting sys-directory: \'{}\''.format(sysdir))
 
 
 def ratio_check(img_w, img_h):
@@ -57,7 +62,7 @@ now = pendulum.now().format('YYYY-MM-DD')
 
 def scrot(strip=False):
     # Take screenshot of screen and pixelize it, save it
-    temp_folder = '{}/temp'.format(filedir)
+    temp_folder = '{}/temp'.format(cachedir)
     if not os.path.exists(temp_folder):
             call(['mkdir', temp_folder])
     temp_out = '{}/out.png'.format(temp_folder)
@@ -109,19 +114,19 @@ def main():
     print('Got link: {}'.format(link))
 
     # Set folder for the images saved by the script
-    strips_folder = '{}/strips/'.format(filedir)
+    strips_folder = '{}/strips/'.format(cachedir)
 
     # Get a listing of the files in 'strips_folder'
     strips_files = glob.glob('strips/*.*')
-    backup_strip = '{}/xkcd.png'.format(filedir)
+    backup_strip = '{}/xkcd.png'.format(cachedir)
 
     # Set a backup comic strip, you know, just in case
     for file in strips_files:
         if args.comic in file:
-            backup_strip = '{}/{}'.format(filedir, file)
+            backup_strip = '{}/{}'.format(cachedir, file)
             break
         else:
-            backup_strip = '{}/xkcd_placeholder.png'.format(filedir)
+            backup_strip = '{}/xkcd_placeholder.png'.format(cachedir)
 
     # Set filename for comic strip to be saved
     strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
