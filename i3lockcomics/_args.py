@@ -6,7 +6,7 @@ from i3lockcomics.__version__ import version
 parser = argparse.ArgumentParser()
 parser.prog = 'i3lockcomics'
 parser.description = 'Lock your screen AND show a comic at the same '\
-                     'time'
+                     'time, you lucky dog you'
 parser.add_argument('--version', '-V',
                     action='version',
                     version='%(prog)s {version}'.

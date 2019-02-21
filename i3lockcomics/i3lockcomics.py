@@ -106,7 +106,6 @@ def scrot(strip=False):
 
 def main():
     global args, _getcomics
-    comics = _getcomics.comics()
     now = _getcomics.now
     # Fetch the newest comic, either the chosen one or a random one
     if not args.comic:
