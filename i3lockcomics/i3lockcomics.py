@@ -3,7 +3,7 @@
 import pendulum
 import os
 from subprocess import call
-from PIL import Image
+from PIL import Image, ImageFilter
 import re
 import requests
 import json
@@ -71,10 +71,15 @@ def scrot(strip=False):
     scrot_w = int(float(scrot.size[0] * 0.1))
     scrot_h = int(float(scrot.size[1] * 0.1))
     scrot.save(temp_out)
-    scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
-    scrot_w = int(float(scrot_w * 10))
-    scrot_h = int(float(scrot_h * 10))
-    scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+    if args.filter == 'pixel':
+        # Pixellize
+        scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+        scrot_w = int(float(scrot_w * 10))
+        scrot_h = int(float(scrot_h * 10))
+        scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+    elif args.filter == 'blur':
+        # Blur
+        scrot = scrot.filter(ImageFilter.GaussianBlur(radius=10))
     scrot.save(temp_out)
 
     if strip:
