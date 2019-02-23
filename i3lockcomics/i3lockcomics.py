@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import pendulum
+import sys
 import os
 from subprocess import call
 from PIL import Image, ImageFilter
