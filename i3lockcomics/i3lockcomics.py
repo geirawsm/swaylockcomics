@@ -150,7 +150,9 @@ def main():
             # comic.
             # Code 6 from curl is 'Could not resolve host'. Not much to
             # do about this, but the script should have a failsafe
-            if curl is 6:
+            # Code 28 is a timeout that is triggered based on the
+            # `--max-time` variable
+            if curl is 6 or curl is 28:
                 strip = backup_strip
                 # Debug
                 print('error 6: make backup strip')
