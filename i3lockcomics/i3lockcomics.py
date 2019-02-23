@@ -129,8 +129,9 @@ def main():
     if not args.comic:
         args.comic = _getcomics.comics()[randint(0, len(
             _getcomics.comics()) - 1)]
+        printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
     link = _getcomics.comics(comic=args.comic)
-    print('Got link: {}'.format(link))
+    printv('Got link: {}'.format(link))
 
     # Set folder for the images saved by the script
     strips_folder = '{}/strips/'.format(cachedir)
