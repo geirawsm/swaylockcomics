@@ -54,9 +54,6 @@ def ratio_check(img_w, img_h):
     return img_w, img_h
 
 
-now = pendulum.now().format('YYYY-MM-DD')
-
-
 def scrot(strip=False):
     # Take screenshot of screen and pixelize it, save it
     temp_folder = '{}/temp'.format(cachedir)
