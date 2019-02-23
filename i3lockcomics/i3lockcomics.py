@@ -30,6 +30,15 @@ max_screen_estate = 0.8
 max_w = int(int(mon_w) * max_screen_estate)
 max_h = int(int(mon_h) * max_screen_estate)
 
+# Before _ANYTHING_, we check that `i3lock` is installed
+check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
+                    stderr=open(os.devnull, 'w'))
+if check_i3lock == 1:
+    raise Exception('Could not find that `i3lock` is installed. Please '
+                    'make sure that this is installed as it is required'
+                    ' for `i3lockcomics` to run.')
+    sys.exit()
+
 # Get the folder for the script's cache
 cachedir = os.path.expanduser('~/.cache/i3lockcomics')
 if not os.path.exists(cachedir):
