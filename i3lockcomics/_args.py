@@ -24,7 +24,7 @@ parser.add_argument('-c', '--comic',
                     dest='comic')
 parser.add_argument('-f', '--filter',
                     help='Chose what obfuscation filter to use, either '
-                         '`pixel` or `blur`. `blur` is default.',
+                         '`pixel`, `morepixel` or `blur`. `blur` is default.',
                     action='store',
                     default='blur',
                     dest='filter')

@@ -65,17 +65,23 @@ def scrot(strip=False):
     temp_out = '{}/out.png'.format(temp_folder)
     call(['scrot', temp_out])
     scrot = Image.open(temp_out)
-    scrot_w = int(float(scrot.size[0] * 0.1))
-    scrot_h = int(float(scrot.size[1] * 0.1))
+    if args.filter == 'morepixel':
+        pixel_scrot = 0.05
+        pixel_radius = 20
+    else:
+        pixel_scrot = 0.1
+        pixel_radius = 10
+    scrot_w = int(float(scrot.size[0] * pixel_scrot))
+    scrot_h = int(float(scrot.size[1] * pixel_scrot))
     scrot.save(temp_out)
-    if args.filter == 'pixel':
-        # Pixellize
+    # Pixellize
+    if 'pixel' in args.filter:
         scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
-        scrot_w = int(float(scrot_w * 10))
-        scrot_h = int(float(scrot_h * 10))
+        scrot_w = int(float(scrot_w * pixel_radius))
+        scrot_h = int(float(scrot_h * pixel_radius))
         scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
+    # Blur
     elif args.filter == 'blur':
-        # Blur
         scrot = scrot.filter(ImageFilter.GaussianBlur(radius=10))
     scrot.save(temp_out)
 
