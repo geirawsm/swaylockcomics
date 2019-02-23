@@ -133,21 +133,6 @@ def comics(comic=False):
             link = False
         return link
 
-    def getcomic_vgcats():
-        '''
-        Gets the link to the most recent VG Cats comic strip.
-        '''
-        global now
-        try:
-            url = 'http://www.vgcats.com/comics/images/'
-            req = requests.get(url, timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            img = soup.find_all('li')[-1]
-            link = '{}{}'.format(url, img.find('a')['href'])
-        except:
-            link = False
-        return link
-
     def getcomic_dinosaurcomics():
         '''
         Gets the link to the most recent Dinosaur Comics comic strip.
