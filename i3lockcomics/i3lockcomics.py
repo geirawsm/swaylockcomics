@@ -112,8 +112,8 @@ def main():
     now = _getcomics.now
     # Fetch the newest comic, either the chosen one or a random one
     if not args.comic:
-        args.comic = _getcomics.comic_names[randint(0, len(
-            _getcomics.comic_names) - 1)]
+        args.comic = _getcomics.comics()[randint(0, len(
+            _getcomics.comics()) - 1)]
     link = _getcomics.comics(comic=args.comic)
     print('Got link: {}'.format(link))
 
