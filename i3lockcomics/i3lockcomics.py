@@ -11,6 +11,9 @@ from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv
 import i3lockcomics._getcomics as _getcomics
 
+if args.verbose:
+    import i3lockcomics._timing
+
 from screeninfo import get_monitors
 monitors = get_monitors()
 mon_w = 0
