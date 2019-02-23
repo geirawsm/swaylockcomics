@@ -119,6 +119,9 @@ def scrot(strip=False):
 def main():
     global args, _getcomics
     now = _getcomics.now
+    if args.list:
+        _getcomics.print_comic_list()
+        sys.exit()
     # Fetch the newest comic, either the chosen one or a random one
     if not args.comic:
         args.comic = _getcomics.comics()[randint(0, len(

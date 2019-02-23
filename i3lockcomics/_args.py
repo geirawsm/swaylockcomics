@@ -16,6 +16,11 @@ parser.add_argument('-v', '--verbose',
                     action='store_true',
                     default=False,
                     dest='verbose')
+parser.add_argument('-l', '--list',
+                    help='List the available comics',
+                    action='store_true',
+                    default=False,
+                    dest='list')
 parser.add_argument('-c', '--comic',
                     help='Chose what comic to use. '
                     'If no comic is called it will randomize.',
