@@ -83,7 +83,10 @@ def scrot(strip=False):
     scrot_w = int(float(scrot.size[0] * pixel_scrot))
     scrot_h = int(float(scrot.size[1] * pixel_scrot))
     scrot.save(temp_out)
+    obfusc_filters = ['pixel', 'morepixel', 'blur']
     # Pixellize
+    if args.filter not in obfusc_filters:
+        args.filter = 'blur'
     if 'pixel' in args.filter:
         scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
         scrot_w = int(float(scrot_w * pixel_radius))
@@ -92,6 +95,9 @@ def scrot(strip=False):
     # Blur
     elif args.filter == 'blur':
         scrot = scrot.filter(ImageFilter.GaussianBlur(radius=10))
+    else:
+        printv('Error when chosing filter')
+        sys.exit()
     scrot.save(temp_out)
 
     if strip:
