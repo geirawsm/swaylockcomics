@@ -12,14 +12,19 @@ def secondsToStr(elapsed=None):
         return str(timedelta(seconds=elapsed))
 
 
-def log(s, elapsed=None):
+def log(_text, elapsed=None):
+    out = ''
+    if 'start' not in _text.lower():
+        out += '\n'
     line = '{}'.format('=' * 40)
-    print(line)
-    print(secondsToStr(), '-', s)
+    out += '{line}\n'.format(line=line)
+    out += '{time} - {_text}\n'.format(time=secondsToStr(), _text=_text)
     if elapsed:
-        print('Elapsed time:', elapsed)
-    print(line)
-    print()
+        out += 'Elapsed time: {}\n'.format(elapsed)
+    out += '{line}'.format(line=line)
+    if 'end' not in _text.lower():
+        out += '\n'
+    print(out)
 
 
 def endlog():
