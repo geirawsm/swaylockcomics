@@ -67,7 +67,7 @@ def comics(comic=False):
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
             strip = soup.find('div', attrs={'class': 'img-comic-container'})
             link = strip.find('img', attrs={'class':
-                              'img-responsive img-comic'})['src']
+                              'img-responsive img-comic'})['src'].replace('//', '')
         except:
             link = False
         return link
