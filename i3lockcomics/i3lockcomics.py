@@ -86,6 +86,8 @@ def scrot(strip=False):
     obfusc_filters = ['pixel', 'morepixel', 'blur']
     # Pixellize
     if args.filter not in obfusc_filters:
+        printv('Chosen filter `{}` is not accepted. Going for `blur` '
+               'instead'.format(args.filter))
         args.filter = 'blur'
     if 'pixel' in args.filter:
         scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
@@ -137,7 +139,7 @@ def main():
             _getcomics.comics()) - 1)]
         printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
     link = _getcomics.comics(comic=args.comic)
-    printv('Got link: {}'.format(link))
+    printv('Comic: {}\nGot link: {}'.format(args.comic, link))
 
     # Set folder for the images saved by the script
     strips_folder = '{}/strips/'.format(cachedir)
