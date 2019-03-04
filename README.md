@@ -13,26 +13,27 @@ This script gets the latest strip of a comic which is added on top of a pixelate
 
 Comics supported:
 
-- Lunch (no)
-- Pondus (no)
-- xkcd
-- Dilbert
-- Rocky (no)
-- Nemi (no)
-~~- Zelda (no)~~
-- Fagprat (no)
-~~- Dunce (no)~~
 - CommitStrip
-- PvP
-- VG Cats
+- Dilbert
 - Dinosaur Comics
-- Livet Blant Dyrene (no)
+- Fagprat (no)
+- Get Fuzzy - new!
 - Lille Berlin (no) - new!
+- Lunch (no)
+- Nemi (no)
+- Pondus (no)
+- PvP
+- xkcd
+
+
+## Install
+
+Easy peasy: `pip install i3lockcomics`
+
 
 ## How to use
 
-Run the script by passing a comic as the first variable, like so: `./i3lock_comics.py lunch`
-If you don't have any preference, just run `./i3lock_comics.py` to get a random comic.
+Run `i3lockcomics` to lock your screen with i3lock and show a random comic strip.
 
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
@@ -46,20 +47,11 @@ If there is no net and no cached comic strip available, the script will use XKCD
 
 But Randall, if I'm mistaken, please let me know.)
 
-If you need to test if the comics are fetched properly, you can run `./i3lock_comics.py test` to see which comics can process perfectly (and returns an url to the comic) and which comics that fails (listed in the end of the print).
-
-If you want to test a specific comic, run `./i3lock_comics.py test lunch`.
-
-
 
 ## Dependencies:
+
+These dependencies are required besides the modules installed by pip:
+
 - i3lock
 - scrot
-- json
 - curl (called by the subprocess module)
-- pendulum
-- requests
-- screeninfo
-- Pillow
-- beautifulsoup4
-- html5lib
