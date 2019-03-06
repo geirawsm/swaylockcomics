@@ -10,6 +10,7 @@ from random import randint
 from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv
 import i3lockcomics._getcomics as _getcomics
+from i3lockcomics._check_network import is_there_internet as is_there_internet
 
 if args.verbose:
     import i3lockcomics._timing
