@@ -128,6 +128,22 @@ def scrot(strip=False):
     return temp_out
 
 
+def sort_filename_by_date(filename):
+    '''
+    Dirty hack but ok:
+    Get a date from a filename in a highly specific format that
+    this script makes and return it
+    '''
+    try:
+        _date = re.search(r'.*-(\d{4})-(\d{2})-(\d{2}).*', filename)
+        year = _date.group(1)
+        month = _date.group(2)
+        day = _date.group(3)
+        return year, month, day
+    except(AttributeError):
+        return (str(0), str(0), str(0))
+
+
 def main():
     global args, _getcomics
     # Check if the script can get internet connection
@@ -197,14 +213,26 @@ def main():
 
     # Maintain all the strips: keep max 5 strips at a time
     # Make sure that only the images are deleted, not other files/folders
-    for file in strips_files:
+    printv('Removing non-jpg-files...')
+    for file in all_strips_files:
         if '.jpg' not in file:
-            strips_files.remove(file)
+            printv('Deleting `{}`'.format(file))
+            os.remove(file)
     # Only keep the 5 newest files
-    if len(strips_files) > 5:
-        clean_number = len(strips_files) - 5 - 1
-        for i in strips_files[0:clean_number]:
-            os.remove(i)
+    printv('Keeping only the ten last images...')
+    all_strips_files = sorted(all_strips_files,
+                              key=sort_filename_by_date,
+                              reverse=True)
+    printd('Found {} images in `all_strips_files`'
+           .format(len(all_strips_files)))
+    if len(all_strips_files) > 10:
+        clean_number = len(all_strips_files) - 10
+        printd('number of images in `all_strips_files`: {}'.
+               format(len(all_strips_files)))
+        printd('clean_number: {}'.format(clean_number))
+        for file in all_strips_files[9:-1]:
+            printd('Deleting this file: {}'.format(file))
+            os.remove(file)
 
 
 if __name__ == '__main__':
