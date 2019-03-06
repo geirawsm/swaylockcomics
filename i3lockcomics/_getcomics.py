@@ -5,9 +5,23 @@ import requests
 from bs4 import BeautifulSoup as bs
 import json
 import re
+import glob
 
 now = pendulum.now().format('YYYY-MM-DD')
 comic_names = []
+
+
+def get_backup_strip(comic, cachedir, sysdir):
+    '''
+    1. Use earlier strip of same comic as chosen if available
+    2. Use fallback xkcd strip
+    '''
+    strips_files = glob.glob('{}/strips/*{}*'.format(cachedir, comic))
+    if strips_files:
+        backup_strip = sorted(strips_files)[-1]
+    else:
+        backup_strip = '{}/xkcd.png'.format(sysdir)
+    return backup_strip
 
 
 def comics(comic=False):

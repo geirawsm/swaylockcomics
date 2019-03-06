@@ -147,24 +147,16 @@ def main():
 
     # Set folder for the images saved by the script
     strips_folder = '{}/strips/'.format(cachedir)
+    all_strips_files = glob.glob('{}/strips/*'.format(cachedir))
 
-    # Get a listing of the files in 'strips_folder'
-    strips_files = glob.glob('strips/*.*')
-    backup_strip = '{}/xkcd.png'.format(cachedir)
-
-    # Set a backup comic strip, you know, just in case
-    for file in strips_files:
-        if args.comic in file:
-            backup_strip = '{}/{}'.format(cachedir, file)
-            break
-        else:
-            backup_strip = '{}/xkcd_placeholder.png'.format(cachedir)
+    backup_strip = _getcomics.get_backup_strip(args.comic, cachedir, sysdir)
 
     # Set filename for comic strip to be saved
     strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
 
-# Make a failsafe in case it can't fetch a comic strip at all
+    # Make a failsafe in case it can't fetch a comic strip at all
     if link is False:
+        printv('Comic returns `False` in link. Using XKCD-fallback strip')
         strip = backup_strip
     else:
         # ...but if all is ok, continue.
@@ -183,20 +175,21 @@ def main():
             if curl is 6 or curl is 28:
                 strip = backup_strip
                 # Debug
-                print('error 6: make backup strip')
+                printv('curl error 6: using XKCD-fallback strip')
+                strip = backup_strip
             # If curl get code 22 (basically a 404), try previous dates
             if curl == 22:
                 # Debug
-                print('error 22: 404, check earlier strips')
+                print('curl error 22: 404, check earlier strips')
                 i = 0
                 while curl is 22:
                     i += 1
-                    link = eval('get_{}(days={})[0]'.format(comic, i))
-                    now = eval('get_{}(days={})[1]'.format(comic, i))
-                    strip = '{}{}-{}.jpg'.format(strips_folder, comic, now)
-                    curl = call(['curl', '-f', link, '-o', strips])
+                    link = eval('get_{}(days={})[0]'.format(args.comic, i))
+                    now = eval('get_{}(days={})[1]'.format(args.comic, i))
+                    strip = '{}{}-{}.jpg'.format(strips_folder,
+                                                 args.comic, now)
+                    curl = call(['curl', '-f', link, '-o', strip])
                     continue
-
 
     # Run lock file
     call(['i3lock', '-i', scrot(strip)])
