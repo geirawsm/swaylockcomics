@@ -16,6 +16,11 @@ parser.add_argument('-v', '--verbose',
                     action='store_true',
                     default=False,
                     dest='verbose')
+parser.add_argument('-d', '--debug',
+                    help='Debug mode',
+                    action='store_true',
+                    default=False,
+                    dest='debug')
 parser.add_argument('-l', '--list',
                     help='List the available comics',
                     action='store_true',
