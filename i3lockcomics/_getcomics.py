@@ -47,8 +47,7 @@ def comics(comic=False):
             req = requests.get('https://www.dagbladet.no/tegneserie/lunch',
                                timeout=3)
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find('article', attrs={'class': 'todays'})\
-                .find('a', attrs={'class': 'strip-container'})\
+            link = soup.find_all('a', attrs={'class': 'strip-container'})[0]\
                 .find('img')['src']
         except:
             link = False
