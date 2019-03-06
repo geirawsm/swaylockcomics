@@ -25,11 +25,13 @@ Comics supported:
 - PvP
 - xkcd
 
+&nbsp;
 
 ## Install
 
 Easy peasy: `pip install i3lockcomics`
 
+&nbsp;
 
 ## How to use
 
@@ -47,6 +49,7 @@ If there is no net and no cached comic strip available, the script will use XKCD
 
 But Randall, if I'm mistaken, please let me know.)
 
+&nbsp;
 
 ## Dependencies:
 
