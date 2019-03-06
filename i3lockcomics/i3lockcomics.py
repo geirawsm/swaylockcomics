@@ -8,7 +8,7 @@ import re
 import glob
 from random import randint
 from i3lockcomics._args import args as args
-from i3lockcomics._printv import printv
+from i3lockcomics._printv import printv, printd
 import i3lockcomics._getcomics as _getcomics
 from i3lockcomics._check_network import is_there_internet as is_there_internet
 from screeninfo import get_monitors
