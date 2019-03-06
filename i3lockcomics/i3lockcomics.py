@@ -129,6 +129,10 @@ def scrot(strip=False):
 
 def main():
     global args, _getcomics
+    # Check if the script can get internet connection
+    if not is_there_internet:
+        args.offline
+        printv('Could\'t get internet connection.')
     now = _getcomics.now
     if args.list:
         _getcomics.print_comic_list()
