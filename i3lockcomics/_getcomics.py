@@ -95,8 +95,9 @@ def comics(comic=False):
             req = requests.get('https://www.dagbladet.no/tegneserie/nemi',
                                timeout=3)
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find_all('img', attrs={'src': re.compile(r'.*tegn'
-                'eserier.dbstatic.no/.*\.jpg')})[0]['src']
+            link = soup.find_all('img', attrs={'src':
+                                 re.compile(r'.*tegneserier.dbstatic.n'
+                                            'o/.*\.jpg')})[0]['src']
         except:
             link = False
         return link
