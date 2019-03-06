@@ -2,3 +2,5 @@
 */temp/*
 *.backup
 *.pyc
+dist
+*egg-info*

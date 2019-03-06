@@ -33,7 +33,8 @@ setup(
         'requests',
         'pendulum',
         'Pillow',
-        'bs4'
+        'bs4',
+        'colorama'
     ],
     package_data={
         'i3lockcomics': [
