@@ -13,12 +13,14 @@ This script gets the latest strip of a comic which is added on top of a pixelate
 
 Comics supported:
 
+- Calvin & Hobbes - new!
 - CommitStrip
 - Dilbert
 - Dinosaur Comics
 - Fagprat (no)
-- Get Fuzzy - new!
-- Lille Berlin (no) - new!
+- Get Fuzzy
+- Intet Nytt fra Hjemmefronten (no) - new!
+- Lille Berlin (no)
 - Lunch (no)
 - Nemi (no)
 - Pondus (no)
