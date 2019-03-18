@@ -35,7 +35,7 @@ Easy peasy: `pip install i3lockcomics`
 
 ## How to use
 
-Run `i3lockcomics` to lock your screen with i3lock and show a random comic strip.
+Run `i3lockcomics` to lock your screen with i3lock and show a random comic strip. You can also chose a specific comic and use a pixellation distort on your lockscreen instead of the blurring. Check out `i3lockcomics -h` for more info.
 
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
