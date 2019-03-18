@@ -217,6 +217,23 @@ def comics(comic=False):
             link = False
         return link
 
+    def getcomic_intetnyttfrahjemmefronten():
+        '''
+        Gets the link to the most recent Intet Nytt Fra Hjemmefronten
+        comic strip.
+        '''
+        global now
+        try:
+            url = 'https://www.dagbladet.no/tegneserie/intetnyttfrahjemmefronten'
+            req = requests.get(url, timeout=3)
+            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+            link = soup.find('article', attrs={'class': 'todays'})\
+                .find('a', attrs={'class': 'strip-container'})\
+                .find('img')['src']
+        except:
+            link = False
+        return link
+
     if comic:
         link = eval('getcomic_{}()'.format(comic))
         return link
