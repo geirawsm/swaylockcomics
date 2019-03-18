@@ -42,7 +42,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Lunch comic strip.
         '''
-        global now
         try:
             req = requests.get('https://www.tu.no/tegneserier/lunch',
                                timeout=3)
@@ -60,7 +59,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Pondus comic strip.
         '''
-        global now
         try:
             req = requests.get('https://www.dagbladet.no/tegneserie/pondus',
                                timeout=3)
@@ -93,7 +91,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Nemi comic strip.
         '''
-        global now
         try:
             req = requests.get('https://www.dagbladet.no/tegneserie/nemi',
                                timeout=3)
@@ -109,7 +106,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Fagprat comic strip.
         '''
-        global now
         try:
             req = requests.get('https://www.dagbladet.no/tegneserie/fagprat',
                                timeout=3)
@@ -139,7 +135,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent PvP comic strip.
         '''
-        global now
         try:
             req = requests.get('http://pvponline.com/comic',
                                timeout=3)
@@ -154,7 +149,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Dinosaur Comics comic strip.
         '''
-        global now
         try:
             req = requests.get('http://www.qwantz.com/rssfeed.php',
                                timeout=3)
@@ -169,7 +163,6 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Lille Berlin comic strip.
         '''
-        global now
         try:
             url = 'https://www.dagbladet.no/tegneserie/lille-berlin'
             req = requests.get(url, timeout=3)
@@ -222,7 +215,6 @@ def comics(comic=False):
         Gets the link to the most recent Intet Nytt Fra Hjemmefronten
         comic strip.
         '''
-        global now
         try:
             url = 'https://www.dagbladet.no/tegneserie/intetnyttfrahjemmefronten'
             req = requests.get(url, timeout=3)
