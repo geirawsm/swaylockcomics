@@ -44,10 +44,13 @@ def comics(comic=False):
         '''
         global now
         try:
-            req = requests.get('https://www.dagbladet.no/tegneserie/lunch',
+            req = requests.get('https://www.tu.no/tegneserier/lunch',
                                timeout=3)
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find_all('a', attrs={'class': 'strip-container'})[0]\
+            figure = soup.find('section', attrs={'class': 'feed-comics'})\
+                .find_all('figure')[-1]
+            link = 'https://www.tu.no'
+            link += figure.find('div', attrs={'class': 'image-container'})\
                 .find('img')['src']
         except:
             link = False
