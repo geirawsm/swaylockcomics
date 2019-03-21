@@ -11,28 +11,10 @@ from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv, printd
 import i3lockcomics._getcomics as _getcomics
 from i3lockcomics._check_network import is_there_internet as is_there_internet
-from screeninfo import get_monitors
+from i3lockcomics._screen import get_screens_info
 
 if args.verbose:
     import i3lockcomics._timing
-
-monitors = get_monitors()
-mon_w = 0
-mon_h = 0
-# Check which monitor is biggest
-for monitor in monitors:
-    temp_mon_w = int(re.search(r'monitor\((\d+)x\d+.*',
-                     str(monitor)).group(1))
-    temp_mon_h = int(re.search(r'monitor\(\d+x(\d+).*',
-                     str(monitor)).group(1))
-    if temp_mon_w > mon_w:
-        mon_w = temp_mon_w
-    if temp_mon_h > mon_h:
-        mon_h = temp_mon_h
-# Setting max width for strips
-max_screen_estate = 0.8
-max_w = int(int(mon_w) * max_screen_estate)
-max_h = int(int(mon_h) * max_screen_estate)
 
 # Before _ANYTHING_, we check that `i3lock` is installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
@@ -123,6 +105,9 @@ def scrot(strip=False):
             img_h = img_h // 2
             placement_w = (int(mon_w) // 2) - img_w
             placement_h = (int(mon_h) // 2) - img_h
+            # Add offset
+            placement_w += offset_w
+            placement_h += offset_h
             scrot.paste(img, (placement_w, placement_h))
             scrot.save(temp_out)
     return temp_out
