@@ -24,7 +24,7 @@ setup(
     author_email='armandg@gmail.com',
     entry_points={
         'console_scripts': [
-            'i3lockcomics = i3lockcomics.i3lockcomics:main'
+            'i3lockcomics = i3lockcomics.__main__:main'
         ]
     },
     packages=find_packages(),

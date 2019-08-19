@@ -12,9 +12,7 @@ from i3lockcomics._printv import printv, printd
 import i3lockcomics._getcomics as _getcomics
 from i3lockcomics._check_network import is_there_internet as is_there_internet
 from i3lockcomics._screen import get_screens_info
-
-if args.verbose:
-    import i3lockcomics._timing
+import i3lockcomics._timing
 
 # Before _ANYTHING_, we check that `i3lock` is installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
@@ -68,6 +66,7 @@ def ratio_check(img_w, img_h):
 
 
 def scrot(strip=False):
+    i3lockcomics._timing.midlog('Starting scrot()')
     # Take screenshot of screen and pixelize it, save it
     temp_folder = '{}/temp'.format(cachedir)
     if not os.path.exists(temp_folder):
@@ -128,6 +127,7 @@ def scrot(strip=False):
             placement_h += offset_h
             scrot.paste(img, (placement_w, placement_h))
             scrot.save(temp_out)
+        i3lockcomics._timing.midlog('scrot() done')
     return temp_out
 
 
@@ -149,20 +149,20 @@ def sort_filename_by_date(filename):
 
 def main():
     global args, _getcomics
-    # Check if the script can get internet connection
-    if not is_there_internet:
-        args.offline
-        printv('Could\'t get internet connection.')
     now = _getcomics.now
     if args.list:
         _getcomics.print_comic_list()
         sys.exit()
     # Fetch the newest comic, either the chosen one or a random one
+    i3lockcomics._timing.midlog('Getting comic...')
     if not args.comic:
         args.comic = _getcomics.comics()[randint(0, len(
             _getcomics.comics()) - 1)]
         printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
-    link = _getcomics.comics(comic=args.comic)
+    if is_there_internet:
+        link = _getcomics.comics(comic=args.comic)
+    else:
+        link = False
     printv('Comic: {}\nGot link: {}'.format(args.comic, link))
 
     # Set folder for the images saved by the script
@@ -179,13 +179,14 @@ def main():
         printv('Comic returns `False` in link. Using XKCD-fallback strip')
         strip = backup_strip
     else:
+        i3lockcomics._timing.midlog('Starting check comic or download')
         # ...but if all is ok, continue.
         # Check to see if the latest comic is already in place
         if not os.path.exists(strip):
             if not os.path.exists(strips_folder):
                 call(['mkdir', strips_folder])
             curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
-                         '5', '--max-time', '5'])
+                         '3', '--max-time', '3'])
             # If curl fails in any way, use the latest strip from same
             # comic.
             # Code 6 from curl is 'Could not resolve host'. Not much to
@@ -210,9 +211,13 @@ def main():
                                                  args.comic, now)
                     curl = call(['curl', '-f', link, '-o', strip])
                     continue
+        i3lockcomics._timing.midlog('Downloaded comic')
 
     # Run lock file
-    call(['i3lock', '-i', scrot(strip)])
+    if args.test:
+        Image.open(strip).show()
+    else:
+        call(['i3lock', '-i', scrot(strip)])
 
     # Maintain all the strips: keep max 5 strips at a time
     # Make sure that only the images are deleted, not other files/folders
