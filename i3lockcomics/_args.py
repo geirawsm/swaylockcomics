@@ -38,6 +38,11 @@ parser.add_argument('-f', '--filter',
                     action='store',
                     default='blur',
                     dest='filter')
+parser.add_argument('-t', '--test',
+                    help='Run `i3lockcomics` in testmode',
+                    action='store_true',
+                    default=False,
+                    dest='test')
 args = parser.parse_args()
 
 if __name__ == '__main__':

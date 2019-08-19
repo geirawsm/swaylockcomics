@@ -3,12 +3,75 @@
 import pendulum
 import requests
 from bs4 import BeautifulSoup as bs
+from PIL import Image, ImageFont, ImageDraw
 import json
 import re
+import os
 import glob
+import sys
 
 now = pendulum.now().format('YYYY-MM-DD')
 comic_names = []
+
+# The font directory is one level higher than this file.
+FONT_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    'fonts'
+)
+
+
+def get_font(fontname, size):
+    try:
+        font_object = ImageFont.truetype(
+            os.path.join(FONT_DIR, fontname),
+            size
+        )
+        return font_object
+    except(OSError):
+        print('Couldn\'t find font \'{}\''.format(fontname))
+        print('Searched {}'.format(FONT_DIR))
+        sys.exit()
+
+
+def text_wrap(text, font, max_width, margin):
+    max_width -= margin * 2
+    lines = []
+    # If the width of the text is smaller than image width
+    # we don't need to split it, just add it to the lines array
+    # and return
+    if font.getsize(text)[0] <= max_width:
+        lines.append(text)
+    else:
+        # split the line by spaces to get words
+        words = text.split(' ')
+        i = 0
+        # append every word to a line while its width is shorter than
+        # image width
+        while i < len(words):
+            line = ''
+            while i < len(words) and\
+                    font.getsize(line + words[i])[0] <= max_width:
+                line = line + words[i] + " "
+                i += 1
+            if not line:
+                line = words[i]
+                i += 1
+            # when the line gets longer than the max width do not
+            # append the word, add the line to the lines array
+            lines.append(line)
+    return lines
+
+
+def draw_text(text, image, font, margin):
+    # open the background file
+    img = Image.open(image)
+
+    # size() returns a tuple of (width, height)
+    image_size = img.size
+
+    # get shorter lines
+    lines = text_wrap(text, font, image_size[0], margin)
+    return lines
 
 
 def get_backup_strip(comic, cachedir, sysdir):
@@ -24,6 +87,26 @@ def get_backup_strip(comic, cachedir, sysdir):
     return backup_strip
 
 
+def xkcd_alttext(comic_in, extra_info):
+    _comic = Image.open(comic_in)
+    canvas_width = _comic.size[0]
+    canvas_height = _comic.size[1]
+    text_font = get_font('OpenSans-Italic.ttf', 18)
+    margin = 10
+    text_split = draw_text(extra_info, comic_in, text_font, margin)
+    new_canvas_height = canvas_height + (22 * len(text_split)) + 22
+    img = Image.new('RGB', (canvas_width, new_canvas_height), 'white')
+    img.paste(_comic, (0, 0))
+    out = ImageDraw.Draw(img)
+    i = 0
+    ver = canvas_height + 10
+    for line in text_split:
+        out.text((margin, ver + i), line, font=text_font, fill=(0, 0, 0))
+        i += 22
+    img.save(comic_in)
+    return comic_in
+
+
 def comics(comic=False):
     def getcomic_xkcd():
         '''
@@ -34,9 +117,11 @@ def comics(comic=False):
                                          timeout=3)
             current_json = json.loads(current_strip.text)
             link = current_json['img']
+            extra_info = '"{}"'.format(current_json['alt'])
         except:
             link = False
-        return link
+            extra_info = ''
+        return {'link': link, 'extra_info': extra_info}
 
     def getcomic_lunch():
         '''
@@ -53,7 +138,7 @@ def comics(comic=False):
                 .find('img')['src']
         except:
             link = False
-        return link
+        return {'link': link}
 
 
     def getcomic_dilbert():
@@ -71,7 +156,7 @@ def comics(comic=False):
                 replace('//', '')
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_nemi():
         '''
@@ -86,7 +171,7 @@ def comics(comic=False):
                                             'o/.*\.jpg')})[0]['src']
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_fagprat():
         '''
@@ -101,7 +186,7 @@ def comics(comic=False):
                 .find('img')['src']
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_commitstrip():
         '''
@@ -115,7 +200,7 @@ def comics(comic=False):
             link = soup.find('content:encoded').find('img')['src']
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_pvp():
         '''
@@ -129,7 +214,7 @@ def comics(comic=False):
                 .find('img')['src']
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_dinosaurcomics():
         '''
@@ -143,8 +228,6 @@ def comics(comic=False):
             link = re.search(r'img src=\"(.*\.png)', str(imgs[0])).group(1)
         except:
             link = False
-        return link
-
         return {'link': link}
 
     def getcomic_getfuzzy():
@@ -163,7 +246,7 @@ def comics(comic=False):
                     pass
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_calvinandhobbes():
         '''
@@ -181,7 +264,7 @@ def comics(comic=False):
                     pass
         except:
             link = False
-        return link
+        return {'link': link}
 
     def getcomic_intetnyttfrahjemmefronten():
         '''
@@ -189,19 +272,25 @@ def comics(comic=False):
         comic strip.
         '''
         try:
-            url = 'https://www.dagbladet.no/tegneserie/intetnyttfrahjemmefronten'
+            url = 'https://www.dagbladet.no/tegneserie/intetnyttfrah'\
+                  'jemmefronten'
             req = requests.get(url, timeout=3)
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find('article', attrs={'class': 'todays'})\
+            link = soup.find_all('article')[0]\
                 .find('a', attrs={'class': 'strip-container'})\
                 .find('img')['src']
         except:
             link = False
-        return link
+        return {'link': link}
 
-    if comic:
-        link = eval('getcomic_{}()'.format(comic))
-        return link
+    if comic == 'xkcd':
+        link = getcomic_xkcd()['link']
+        extra_info = getcomic_xkcd()['extra_info']
+        return {'link': link, 'extra_info': extra_info}
+    elif comic:
+        link = eval('getcomic_{}()'.format(comic))['link']
+        extra_info = ''
+        return {'link': link, 'extra_info': extra_info}
     else:
         # Get all the available functions that is comic-related
         comic_names = []
@@ -225,4 +314,3 @@ def print_comic_list():
 
 if __name__ == '__main__':
     print_comic_list()
-    

@@ -160,10 +160,14 @@ def main():
             _getcomics.comics()) - 1)]
         printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
     if is_there_internet:
-        link = _getcomics.comics(comic=args.comic)
+        _comics_in = _getcomics.comics(comic=args.comic)
+        link = _comics_in['link']
+        extra_info = _comics_in['extra_info']
     else:
         link = False
-    printv('Comic: {}\nGot link: {}'.format(args.comic, link))
+        extra_info = False
+    printv('Comic: {}\nGot link: {}\nGot `extra_info`: {}'
+           .format(args.comic, link, extra_info))
 
     # Set folder for the images saved by the script
     strips_folder = '{}/strips/'.format(cachedir)
@@ -211,6 +215,8 @@ def main():
                                                  args.comic, now)
                     curl = call(['curl', '-f', link, '-o', strip])
                     continue
+            if args.comic == 'xkcd':
+                strip = _getcomics.xkcd_alttext(strip, extra_info)
         i3lockcomics._timing.midlog('Downloaded comic')
 
     # Run lock file

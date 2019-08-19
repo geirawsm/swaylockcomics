@@ -49,6 +49,8 @@ If there is no net and no cached comic strip available, the script will use XKCD
 
 But Randall, if I'm mistaken, please let me know.)
 
+When using xkcd, it will also get the alt-text for the image and paste it underneath the comic.
+
 &nbsp;
 
 ## Dependencies:
