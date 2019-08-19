@@ -55,20 +55,6 @@ def comics(comic=False):
             link = False
         return link
 
-    def getcomic_pondus():
-        '''
-        Gets the link to the most recent Pondus comic strip.
-        '''
-        try:
-            req = requests.get('https://www.dagbladet.no/tegneserie/pondus',
-                               timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find('article', attrs={'class': 'todays'})\
-                .find('a', attrs={'class': 'strip-container'})\
-                .find('img')['src']
-        except:
-            link = False
-        return link
 
     def getcomic_dilbert():
         '''
@@ -159,20 +145,7 @@ def comics(comic=False):
             link = False
         return link
 
-    def getcomic_lilleberlin():
-        '''
-        Gets the link to the most recent Lille Berlin comic strip.
-        '''
-        try:
-            url = 'https://www.dagbladet.no/tegneserie/lille-berlin'
-            req = requests.get(url, timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find('article', attrs={'class': 'todays'})\
-                .find('a', attrs={'class': 'strip-container'})\
-                .find('img')['src']
-        except:
-            link = False
-        return link
+        return {'link': link}
 
     def getcomic_getfuzzy():
         '''
