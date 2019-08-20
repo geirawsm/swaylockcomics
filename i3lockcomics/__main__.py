@@ -70,9 +70,11 @@ def scrot(strip=False):
     # Take screenshot of screen and pixelize it, save it
     temp_folder = '{}/temp'.format(cachedir)
     if not os.path.exists(temp_folder):
-            call(['mkdir', temp_folder])
+        call(['mkdir', temp_folder])
     temp_out = '{}/out.png'.format(temp_folder)
-    call(['scrot', temp_out])
+    if os.path.exists(temp_out):
+        os.remove(temp_out)
+        call(['scrot', temp_out])
     scrot = Image.open(temp_out)
     if args.filter == 'morepixel':
         pixel_scrot = 0.05
