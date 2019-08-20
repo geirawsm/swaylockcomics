@@ -38,7 +38,8 @@ setup(
     ],
     package_data={
         'i3lockcomics': [
-            'xkcd.png'
+            'xkcd.png',
+            'fonts/OpenSans-Italic.ttf'
         ]
     },
 )
