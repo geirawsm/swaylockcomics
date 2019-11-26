@@ -232,11 +232,8 @@ def main():
                                                  args.comic, now)
                     curl = call(['curl', '-f', link, '-o', strip])
                     continue
-<<<<<<< Updated upstream:i3lockcomics/__main__.py
             if args.comic == 'xkcd':
                 strip = _getcomics.xkcd_alttext(strip, extra_info)
-=======
->>>>>>> Stashed changes:i3lockcomics/i3lockcomics.py
         i3lockcomics._timing.midlog('Downloaded comic')
 
     # Run lock file
