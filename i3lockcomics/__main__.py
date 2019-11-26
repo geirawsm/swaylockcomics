@@ -166,6 +166,12 @@ def sort_filename_by_date(filename):
 def main():
     global args, _getcomics
     now = _getcomics.now
+    # Set folder for the images saved by the script
+    strips_folder = '{}/strips/'.format(cachedir)
+
+    backup_strip = _getcomics.get_backup_strip(args.comic, cachedir, sysdir)
+
+    # Only print a list over available comics
     if args.list:
         _getcomics.print_comic_list()
         sys.exit()
@@ -175,6 +181,13 @@ def main():
         args.comic = _getcomics.comics()[randint(0, len(
             _getcomics.comics()) - 1)]
         printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
+    # Set filename for comic strip to be saved
+    strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
+    if os.path.exists(strip):
+        printv('Found today\'s file already saved, using that instead '
+               'of downloading again.')
+        call(['i3lock', '-i', scrot(strip)])
+        sys.exit()
     if is_there_internet:
         _comics_in = _getcomics.comics(comic=args.comic)
         link = _comics_in['link']
@@ -184,15 +197,6 @@ def main():
         extra_info = False
     printv('Comic: {}\nGot link: {}\nGot `extra_info`: {}'
            .format(args.comic, link, extra_info))
-
-    # Set folder for the images saved by the script
-    strips_folder = '{}/strips/'.format(cachedir)
-    all_strips_files = glob.glob('{}/strips/*'.format(cachedir))
-
-    backup_strip = _getcomics.get_backup_strip(args.comic, cachedir, sysdir)
-
-    # Set filename for comic strip to be saved
-    strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
 
     # Make a failsafe in case it can't fetch a comic strip at all
     if link is False:
@@ -240,6 +244,7 @@ def main():
     # Maintain all the strips: keep max 5 strips at a time
     # Make sure that only the images are deleted, not other files/folders
     printv('Removing non-jpg-files...')
+    all_strips_files = glob.glob('{}/strips/*'.format(cachedir))
     for file in all_strips_files:
         if '.jpg' not in file:
             printv('Deleting `{}`'.format(file))
