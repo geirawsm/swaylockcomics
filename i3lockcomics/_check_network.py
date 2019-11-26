@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import socket
+import i3lockcomics._timing
 
 
 def is_there_internet(host="8.8.8.8", port=53, timeout=3):
@@ -9,6 +10,7 @@ def is_there_internet(host="8.8.8.8", port=53, timeout=3):
     OpenPort: 53/tcp
     Service: domain (DNS/TCP)
     """
+    i3lockcomics._timing.midlog('Checking network connection')
     try:
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
