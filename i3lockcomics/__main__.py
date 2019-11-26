@@ -14,11 +14,8 @@ from i3lockcomics._check_network import is_there_internet as is_there_internet
 from i3lockcomics._screen import get_screens_info
 import i3lockcomics._timing
 
-<<<<<<< Updated upstream:i3lockcomics/__main__.py
-# Before _ANYTHING_, we check that `i3lock` and `scrot` is installed
-=======
-# Before _ANYTHING_, we check that `i3lock` is installed
->>>>>>> Stashed changes:i3lockcomics/i3lockcomics.py
+# Before _ANYTHING_, we check that `i3lock`, `scrot` and `curl` is
+# installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
                     stderr=open(os.devnull, 'w'))
 check_scrot = call(['which', 'scrot'], stdout=open(os.devnull, 'w'),
