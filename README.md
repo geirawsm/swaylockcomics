@@ -1,4 +1,4 @@
-# i3lock-comics
+# i3lockcomics
 Python script to fetch the newest edition of a comic strip and use it in i3lock. *Highly* inspired by [xkcd-lock](https://github.com/angs/xkcd-lock) by [@angs](https://github.com/angs).
 
 &nbsp;
