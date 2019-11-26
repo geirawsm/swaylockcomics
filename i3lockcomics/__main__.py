@@ -14,14 +14,23 @@ from i3lockcomics._check_network import is_there_internet as is_there_internet
 from i3lockcomics._screen import get_screens_info
 import i3lockcomics._timing
 
-# Before _ANYTHING_, we check that `i3lock` is installed
+# Before _ANYTHING_, we check that `i3lock` and `scrot` is installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
+                    stderr=open(os.devnull, 'w'))
+check_scrot = call(['which', 'scrot'], stdout=open(os.devnull, 'w'),
                     stderr=open(os.devnull, 'w'))
 if check_i3lock == 1:
     raise Exception('Could not find that `i3lock` is installed. Please '
                     'make sure that this is installed as it is required'
                     ' for `i3lockcomics` to run.')
     sys.exit()
+elif check_scrot == 1:
+    raise Exception('Could not find that `scrot` is installed. Please '
+                    'make sure that this is installed as it is required'
+                    ' for `i3lockcomics` to run.')
+    sys.exit()
+
+
 
 # Get screen info
 screens = get_screens_info()
@@ -74,7 +83,7 @@ def scrot(strip=False):
     temp_out = '{}/out.png'.format(temp_folder)
     if os.path.exists(temp_out):
         os.remove(temp_out)
-        call(['scrot', temp_out])
+    call(['scrot', temp_out])
     scrot = Image.open(temp_out)
     if args.filter == 'morepixel':
         pixel_scrot = 0.05
