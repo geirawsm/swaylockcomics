@@ -215,19 +215,15 @@ def main():
             # `--max-time` variable
             if curl is 6 or curl is 28:
                 strip = backup_strip
-                # Debug
-                printv('curl error 6: using XKCD-fallback strip')
                 strip = backup_strip
             # If curl get code 22 (basically a 404), try previous dates
             if curl == 22:
-                # Debug
-                print('curl error 22: 404, check earlier strips')
                 i = 0
                 while curl is 22:
                     i += 1
                     link = eval('get_{}(days={})[0]'.format(args.comic, i))
                     now = eval('get_{}(days={})[1]'.format(args.comic, i))
-                    strip = '{}{}-{}.jpg'.format(strips_folder,
+                    strip = '{}{}-{}.png'.format(strips_folder,
                                                  args.comic, now)
                     curl = call(['curl', '-f', link, '-o', strip])
                     continue

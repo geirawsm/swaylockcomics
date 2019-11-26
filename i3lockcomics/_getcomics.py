@@ -252,18 +252,22 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Calvin and Hobbes comic strip.
         '''
-        try:
-            req = requests.get('https://www.gocomics.com/calvinandhobbes/',
-                               timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            div = soup.find('div', attrs={'class': 'gc-deck--cta-0'})
-            imgs = div.find_all('img')
+        #try:
+        req = requests.get('https://www.gocomics.com/calvinandhobbes/',
+                           timeout=3)
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        div = soup.find('div', attrs={'class': 'gc-deck--cta-0'})
+        imgs = div.find_all('img')
+        if args.debug:
+            print('Found these images:')
             for img in imgs:
-                if 'assets.amuniversal.com/' in img['src']:
-                    link = img['src']
-                    pass
-        except:
-            link = False
+                print(img)
+        for img in imgs:
+            if 'assets.amuniversal.com/' in img['src']:
+                link = img['src']
+                pass
+#        except:
+#            link = False
         return {'link': link}
 
     def getcomic_intetnyttfrahjemmefronten():
