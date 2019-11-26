@@ -18,17 +18,22 @@ import i3lockcomics._timing
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
                     stderr=open(os.devnull, 'w'))
 check_scrot = call(['which', 'scrot'], stdout=open(os.devnull, 'w'),
-                    stderr=open(os.devnull, 'w'))
+                   stderr=open(os.devnull, 'w'))
+check_curl = call(['which', 'curl'], stdout=open(os.devnull, 'w'),
+                  stderr=open(os.devnull, 'w'))
 if check_i3lock == 1:
     raise Exception('Could not find that `i3lock` is installed. Please '
                     'make sure that this is installed as it is required'
                     ' for `i3lockcomics` to run.')
-    sys.exit()
-elif check_scrot == 1:
+if check_scrot == 1:
     raise Exception('Could not find that `scrot` is installed. Please '
                     'make sure that this is installed as it is required'
                     ' for `i3lockcomics` to run.')
-    sys.exit()
+if check_curl == 1:
+    raise Exception('Could not find that `curl` is installed. Please '
+                    'make sure that this is installed as it is required'
+                    ' for `i3lockcomics` to run.')
+
 
 
 
