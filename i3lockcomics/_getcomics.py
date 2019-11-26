@@ -108,6 +108,17 @@ def xkcd_alttext(comic_in, extra_info):
 
 
 def comics(comic=False):
+    def get_gocomics(url):
+        req = requests.get(url, timeout=3)
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+        div = soup.find('div', attrs={'class': 'gc-deck--cta-0'})
+        imgs = div.find_all('img')
+        for img in imgs:
+            if 'assets.amuniversal.com/' in img['src']:
+                link = img['src']
+                pass
+        return link
+
     def getcomic_xkcd():
         '''
         Gets the link to the most recent xkcd comic strip.
@@ -139,7 +150,6 @@ def comics(comic=False):
         except:
             link = False
         return {'link': link}
-
 
     def getcomic_dilbert():
         '''
@@ -235,15 +245,7 @@ def comics(comic=False):
         Gets the link to the most recent Get Fuzzy comic strip.
         '''
         try:
-            req = requests.get('https://www.gocomics.com/getfuzzy/',
-                               timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            div = soup.find('div', attrs={'class': 'gc-deck--cta-0'})
-            imgs = div.find_all('img')
-            for img in imgs:
-                if 'assets.amuniversal.com/' in img['src']:
-                    link = img['src']
-                    pass
+            link = get_gocomics('https://www.gocomics.com/getfuzzy/')
         except:
             link = False
         return {'link': link}
@@ -252,22 +254,10 @@ def comics(comic=False):
         '''
         Gets the link to the most recent Calvin and Hobbes comic strip.
         '''
-        #try:
-        req = requests.get('https://www.gocomics.com/calvinandhobbes/',
-                           timeout=3)
-        soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-        div = soup.find('div', attrs={'class': 'gc-deck--cta-0'})
-        imgs = div.find_all('img')
-        if args.debug:
-            print('Found these images:')
-            for img in imgs:
-                print(img)
-        for img in imgs:
-            if 'assets.amuniversal.com/' in img['src']:
-                link = img['src']
-                pass
-#        except:
-#            link = False
+        try:
+            link = get_gocomics('https://www.gocomics.com/calvinandhobbes/')
+        except:
+            link = False
         return {'link': link}
 
     def getcomic_intetnyttfrahjemmefronten():
