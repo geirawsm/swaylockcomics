@@ -34,7 +34,7 @@ setup(
         'pendulum',
         'Pillow',
         'bs4',
-        'colorama'
+        'colorama',
         'html5lib'
     ],
     package_data={

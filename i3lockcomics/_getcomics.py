@@ -19,7 +19,6 @@ FONT_DIR = os.path.join(
     'fonts'
 )
 
-
 def get_font(fontname, size):
     try:
         font_object = ImageFont.truetype(
@@ -83,7 +82,7 @@ def get_backup_strip(comic, cachedir, sysdir):
     if strips_files:
         backup_strip = sorted(strips_files)[-1]
     else:
-        backup_strip = '{}/xkcd.png'.format(sysdir)
+        backup_strip = '{}/temp/xkcd.png'.format(cachedir)
     return backup_strip
 
 

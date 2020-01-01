@@ -13,6 +13,30 @@ import i3lockcomics._getcomics as _getcomics
 from i3lockcomics._check_network import is_there_internet as is_there_internet
 from i3lockcomics._screen import get_screens_info
 import i3lockcomics._timing
+import hashlib
+
+
+def copy_fallback_xkcd():
+    '''
+    Check if the fallback strip is in the temp-folder. If it's not,
+    copy the original from the module folder.
+    If the file is present, do a checksum comparison of both files, and
+    if the temp-file deviates, replace it with the original.
+    '''
+    global sysdir, cachedir
+    sys_xkcd = '{}/xkcd.png'.format(sysdir)
+    cache_xkcd = '{}/temp/xkcd.png'.format(cachedir)
+    if not os.path.exists(cache_xkcd) or\
+            not md5(sys_xkcd) != md5(cache_xkcd):
+        call(['cp', sys_xkcd, cache_xkcd])
+
+
+def md5(fname):
+    hash_md5 = hashlib.md5()
+    with open(fname, "rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            hash_md5.update(chunk)
+    return hash_md5.hexdigest()
 
 # Before _ANYTHING_, we check that `i3lock`, `scrot` and `curl` is
 # installed
@@ -56,13 +80,19 @@ max_w = int(int(mon_w) * max_screen_estate)
 max_h = int(int(mon_h) * max_screen_estate)
 printd('Got max width {} and max height {} for comic'.format(max_w, max_h))
 
-# Get the folder for the script's cache
+# Instatiate (and create) necessary folders
 cachedir = os.path.expanduser('~/.cache/i3lockcomics')
 if not os.path.exists(cachedir):
     call(['mkdir', cachedir])
 printv('Setting script directory to \'{}\''.format(cachedir))
 sysdir = os.path.dirname(os.path.realpath(__file__))
 printv('Getting sys-directory: \'{}\''.format(sysdir))
+temp_folder = '{}/temp'.format(cachedir)
+if not os.path.exists(temp_folder):
+    call(['mkdir', temp_folder])
+
+# Copying the XKCD fallback comic to .cache-folder
+copy_fallback_xkcd()
 
 
 def ratio_check(img_w, img_h):
@@ -83,9 +113,6 @@ def ratio_check(img_w, img_h):
 def scrot(strip=False):
     i3lockcomics._timing.midlog('Starting scrot()')
     # Take screenshot of screen and pixelize it, save it
-    temp_folder = '{}/temp'.format(cachedir)
-    if not os.path.exists(temp_folder):
-        call(['mkdir', temp_folder])
     temp_out = '{}/out.png'.format(temp_folder)
     if os.path.exists(temp_out):
         os.remove(temp_out)
@@ -169,7 +196,6 @@ def main():
     now = _getcomics.now
     # Set folder for the images saved by the script
     strips_folder = '{}/strips/'.format(cachedir)
-
     backup_strip = _getcomics.get_backup_strip(args.comic, cachedir, sysdir)
 
     # Only print a list over available comics
