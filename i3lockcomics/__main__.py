@@ -236,8 +236,8 @@ def main():
         if not os.path.exists(strip):
             if not os.path.exists(strips_folder):
                 call(['mkdir', strips_folder])
-            curl = call(['curl', '-f', link, '-o', strip, '--connect-timeout',
-                         '3', '--max-time', '3', '> /dev/null 2>&1 &'])
+            curl = call(['curl', '-s', '-f', link, '-o', strip,
+                         '--connect-timeout', '3', '--max-time', '3'])
             # If curl fails in any way, use the latest strip from same
             # comic.
             # Code 6 from curl is 'Could not resolve host'. Not much to
