@@ -244,13 +244,13 @@ def main():
             # do about this, but the script should have a failsafe
             # Code 28 is a timeout that is triggered based on the
             # `--max-time` variable
-            if curl is 6 or curl is 28:
+            if curl == 6 or curl == 28:
                 strip = backup_strip
                 strip = backup_strip
             # If curl get code 22 (basically a 404), try previous dates
             if curl == 22:
                 i = 0
-                while curl is 22:
+                while curl == 22:
                     i += 1
                     link = eval('get_{}(days={})[0]'.format(args.comic, i))
                     now = eval('get_{}(days={})[1]'.format(args.comic, i))

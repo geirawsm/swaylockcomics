@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import re
-from subprocess import check_call, Popen, PIPE
+from subprocess import Popen, PIPE
 
 
 _xrandr = Popen(['xrandr'], stdout=PIPE, stderr=PIPE, universal_newlines=True)
