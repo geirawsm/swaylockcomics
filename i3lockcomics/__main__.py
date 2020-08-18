@@ -38,11 +38,11 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-# Before _ANYTHING_, we check that `i3lock`, `scrot` and `curl` is
+# Before _ANYTHING_, we check that `i3lock`, `maim` and `curl` is
 # installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
                     stderr=open(os.devnull, 'w'))
-check_scrot = call(['which', 'scrot'], stdout=open(os.devnull, 'w'),
+check_maim = call(['which', 'maim'], stdout=open(os.devnull, 'w'),
                    stderr=open(os.devnull, 'w'))
 check_curl = call(['which', 'curl'], stdout=open(os.devnull, 'w'),
                   stderr=open(os.devnull, 'w'))
@@ -50,8 +50,8 @@ if check_i3lock == 1:
     raise Exception('Could not find that `i3lock` is installed. Please '
                     'make sure that this is installed as it is required'
                     ' for `i3lockcomics` to run.')
-if check_scrot == 1:
-    raise Exception('Could not find that `scrot` is installed. Please '
+if check_maim == 1:
+    raise Exception('Could not find that `maim` is installed. Please '
                     'make sure that this is installed as it is required'
                     ' for `i3lockcomics` to run.')
 if check_curl == 1:
@@ -116,7 +116,7 @@ def scrot(strip=False):
     temp_out = '{}/out.png'.format(temp_folder)
     if os.path.exists(temp_out):
         os.remove(temp_out)
-    call(['scrot', temp_out])
+    call(['maim', temp_out])
     scrot = Image.open(temp_out)
     if args.filter == 'morepixel':
         pixel_scrot = 0.05
