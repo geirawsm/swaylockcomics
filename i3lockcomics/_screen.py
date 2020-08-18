@@ -18,20 +18,34 @@ def get_screens_info():
             continue
         if 'connected' in line:
             try:
-                # Try to get following line:
-                # DP2-2 connected primary 1920x1080+1600+0 (normal left
-                # inverted right x axis y axis) 600mm x 340mm
+                '''
+                Try to get following line:
+
+                DP2-2 connected primary 1920x1080+1600+0 (normal left
+                inverted right x axis y axis) 600mm x 340mm
+
+                or this
+
+                eDP connected (normal left inverted right x axis y axis)
+                '''
+                print(line)
                 re_screen = re.search(r'^([a-zA-Z0-9\-]+)\s+(connected|disconnected)\sprimary\s(\d+x\d+)\+(\d+\+\d+) \(.*', line)
-                temp_out['state'] = re_screen.group(2)
-                temp_out['primary'] = True
-                temp_out['res'] = re_screen.group(3)
-                temp_out['offset'] = re_screen.group(4)
+                if re_screen is None:
+                    continue
+                else:
+                    temp_out['state'] = re_screen.group(2)
+                    temp_out['primary'] = True
+                    temp_out['res'] = re_screen.group(3)
+                    temp_out['offset'] = re_screen.group(4)
             except(AttributeError):
-                re_screen = re.search(r'^([a-zA-Z0-9\-]+)\s+(connected|disconnected)\s(\d+x\d+)\+(\d+\+\d+) \(.*', line)
-                temp_out['state'] = re_screen.group(2)
-                temp_out['primary'] = False
-                temp_out['res'] = re_screen.group(3)
-                temp_out['offset'] = re_screen.group(4)
+                if re_screen is None:
+                    continue
+                else:
+                    re_screen = re.search(r'^([a-zA-Z0-9\-]+)\s+(connected|disconnected)\s(\d+x\d+)\+(\d+\+\d+) \(.*', line)
+                    temp_out['state'] = re_screen.group(2)
+                    temp_out['primary'] = False
+                    temp_out['res'] = re_screen.group(3)
+                    temp_out['offset'] = re_screen.group(4)
             except:
                 pass
             out[re_screen.group(1)] = temp_out
