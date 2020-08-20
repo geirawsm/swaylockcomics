@@ -118,16 +118,19 @@ def scrot(strip=False):
         os.remove(temp_out)
     call(['maim', temp_out])
     scrot = Image.open(temp_out)
-    if args.filter == 'morepixel':
+    obfusc_filters = ['pixel', 'morepixel', 'blur']
+    if args.filter == 'pixel':
+        pixel_scrot = 0.1
+        pixel_radius = 10
+    elif args.filter == 'morepixel':
         pixel_scrot = 0.05
         pixel_radius = 20
     else:
-        pixel_scrot = 0.1
-        pixel_radius = 10
+        print('Filter `{}` is not recognized'.format(args.filter))
+        sys.exit()
     scrot_w = int(float(scrot.size[0] * pixel_scrot))
     scrot_h = int(float(scrot.size[1] * pixel_scrot))
     scrot.save(temp_out)
-    obfusc_filters = ['pixel', 'morepixel', 'blur']
     # Pixellize
     if args.filter not in obfusc_filters:
         printv('Chosen filter `{}` is not accepted. Going for `blur` '
