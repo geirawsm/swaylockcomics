@@ -58,5 +58,5 @@ When using xkcd, it will also get the alt-text for the image and paste it undern
 These dependencies are required besides the modules installed by pip:
 
 - i3lock
-- scrot
+- maim
 - curl (called by the subprocess module)
