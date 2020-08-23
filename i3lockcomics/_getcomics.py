@@ -19,6 +19,7 @@ FONT_DIR = os.path.join(
     'fonts'
 )
 
+
 def get_font(fontname, size):
     try:
         font_object = ImageFont.truetype(
@@ -108,6 +109,9 @@ def xkcd_alttext(comic_in, extra_info):
 
 def comics(comic=False):
     def get_gocomics(url):
+        '''
+        Get comic image from gocomics.com
+        '''
         req = requests.get(url, timeout=3)
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")
         div = soup.find('div', attrs={'class': 'gc-deck--cta-0'})

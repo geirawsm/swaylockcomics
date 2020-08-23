@@ -39,12 +39,13 @@ def md5(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
+
 # Before _ANYTHING_, we check that `i3lock`, `maim` and `curl` is
 # installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
                     stderr=open(os.devnull, 'w'))
 check_maim = call(['which', 'maim'], stdout=open(os.devnull, 'w'),
-                   stderr=open(os.devnull, 'w'))
+                  stderr=open(os.devnull, 'w'))
 check_curl = call(['which', 'curl'], stdout=open(os.devnull, 'w'),
                   stderr=open(os.devnull, 'w'))
 if check_i3lock == 1:
@@ -59,8 +60,6 @@ if check_curl == 1:
     raise Exception('Could not find that `curl` is installed. Please '
                     'make sure that this is installed as it is required'
                     ' for `i3lockcomics` to run.')
-
-
 
 
 # Get screen info
@@ -81,7 +80,7 @@ max_w = int(int(mon_w) * max_screen_estate)
 max_h = int(int(mon_h) * max_screen_estate)
 printd('Got max width {} and max height {} for comic'.format(max_w, max_h))
 
-# Instatiate (and create) necessary folders
+# Create necessary folders
 cachedir = os.path.expanduser('~/.cache/i3lockcomics')
 if not os.path.exists(cachedir):
     call(['mkdir', cachedir])
@@ -203,6 +202,8 @@ def main():
     now = _getcomics.now
     # Set folder for the images saved by the script
     strips_folder = '{}/strips/'.format(cachedir)
+    if not os.path.exists(strips_folder):
+        call(['mkdir', strips_folder])
     backup_strip = _getcomics.get_backup_strip(args.comic, cachedir, sysdir)
 
     # Only print a list over available comics
@@ -217,11 +218,19 @@ def main():
         printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
     # Set filename for comic strip to be saved
     strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
+    # If filename exists, and it is a valid image file, use that
+    # instead of redownloading
     if os.path.exists(strip):
-        printv('Found today\'s file already saved, using that instead '
-               'of downloading again.')
-        call(['i3lock', '-i', scrot(strip)])
-        sys.exit()
+        printv('Strip already exists...')
+        image_check = imghdr.what(strip)
+        if image_check is None:
+            printv('...and something is wrong with it. Redownloading.')
+            os.remove(strip)
+        else:
+            printv('...and it is good! Using that file instead of '
+                   'redownloading.')
+            call(['i3lock', '-i', screenshot(strip)])
+            sys.exit()
     if is_there_internet:
         _comics_in = _getcomics.comics(comic=args.comic)
         link = _comics_in['link']
@@ -241,8 +250,6 @@ def main():
         # ...but if all is ok, continue.
         # Check to see if the latest comic is already in place
         if not os.path.exists(strip):
-            if not os.path.exists(strips_folder):
-                call(['mkdir', strips_folder])
             curl = call(['curl', '-s', '-f', link, '-o', strip,
                          '--connect-timeout', '3', '--max-time', '3'])
             # If curl fails in any way, use the latest strip from same

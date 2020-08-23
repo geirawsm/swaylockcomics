@@ -11,12 +11,12 @@ parser.add_argument('--version', '-V',
                     action='version',
                     version='%(prog)s {version}'.
                     format(version=version))
-parser.add_argument('-v', '--verbose',
+parser.add_argument('--verbose',
                     help='Verbose mode',
                     action='store_true',
                     default=False,
                     dest='verbose')
-parser.add_argument('-d', '--debug',
+parser.add_argument('--debug',
                     help='Debug mode',
                     action='store_true',
                     default=False,
