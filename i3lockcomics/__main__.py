@@ -7,6 +7,7 @@ from PIL import Image, ImageFilter
 import re
 import glob
 from random import randint
+import imghdr
 from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv, printd
 import i3lockcomics._getcomics as _getcomics
@@ -110,44 +111,47 @@ def ratio_check(img_w, img_h):
     return img_w, img_h
 
 
-def scrot(strip=False):
-    i3lockcomics._timing.midlog('Starting scrot()')
-    # Take screenshot of screen and pixelize it, save it
+def screenshot(strip=False):
+    '''
+    Take screenshot of screen and pixelize it, save it
+    '''
+    def bg_obfuscation(image_in):
+        '''
+        Take a pillow_object and obfuscate it as wanted
+        '''
+        obfusc_filters = ['pixel', 'morepixel', 'blur']
+        # If args.filter is not recognized, use blur
+        if args.filter not in obfusc_filters:
+            printv('Filter `{}` is not recognized'.format(args.filter))
+            printv('Using `blur` as standard')
+            args.filter = 'blur'
+        elif args.filter == 'pixel' or args.filter == 'morepixel':
+            if args.filter == 'pixel':
+                pixel_size = 0.1
+                pixel_radius = 10
+            elif args.filter == 'morepixel':
+                pixel_size = 0.05
+                pixel_radius = 20
+            image_in_w = int(float(image_in.size[0] * pixel_size))
+            image_in_h = int(float(image_in.size[1] * pixel_size))
+            image_in.save(temp_out)
+            image_in = image_in.resize((image_in_w, image_in_h), Image.BOX)
+            image_in_w = int(float(image_in_w * pixel_radius))
+            image_in_h = int(float(image_in_h * pixel_radius))
+            image_in = image_in.resize((image_in_w, image_in_h), Image.BOX)
+        # Blur
+        elif args.filter == 'blur':
+            image_in = image_in.filter(ImageFilter.GaussianBlur(radius=10))
+        image_in.save(temp_out)
+
+    i3lockcomics._timing.midlog('Starting `{}`'.format(inspect.stack()[0][3]))
     temp_out = '{}/out.png'.format(temp_folder)
+    # If tempfile already exist, remove it and take new screenshot
     if os.path.exists(temp_out):
         os.remove(temp_out)
     call(['maim', temp_out])
-    scrot = Image.open(temp_out)
-    obfusc_filters = ['pixel', 'morepixel', 'blur']
-    if args.filter == 'pixel':
-        pixel_scrot = 0.1
-        pixel_radius = 10
-    elif args.filter == 'morepixel':
-        pixel_scrot = 0.05
-        pixel_radius = 20
-    else:
-        print('Filter `{}` is not recognized'.format(args.filter))
-        sys.exit()
-    scrot_w = int(float(scrot.size[0] * pixel_scrot))
-    scrot_h = int(float(scrot.size[1] * pixel_scrot))
-    scrot.save(temp_out)
-    # Pixellize
-    if args.filter not in obfusc_filters:
-        printv('Chosen filter `{}` is not accepted. Going for `blur` '
-               'instead'.format(args.filter))
-        args.filter = 'blur'
-    if 'pixel' in args.filter:
-        scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
-        scrot_w = int(float(scrot_w * pixel_radius))
-        scrot_h = int(float(scrot_h * pixel_radius))
-        scrot = scrot.resize((scrot_w, scrot_h), Image.BOX)
-    # Blur
-    elif args.filter == 'blur':
-        scrot = scrot.filter(ImageFilter.GaussianBlur(radius=10))
-    else:
-        printv('Error when chosing filter')
-        sys.exit()
-    scrot.save(temp_out)
+    screenshot_img = Image.open(temp_out)
+    bg_obfuscation(screenshot_img)
 
     if strip:
         if not os.path.exists(strip):
@@ -172,9 +176,9 @@ def scrot(strip=False):
             # Add offset
             placement_w += offset_w
             placement_h += offset_h
-            scrot.paste(img, (placement_w, placement_h))
-            scrot.save(temp_out)
-        i3lockcomics._timing.midlog('scrot() done')
+            screenshot_img.paste(img, (placement_w, placement_h))
+            screenshot_img.save(temp_out)
+        i3lockcomics._timing.midlog('`{}` done'.format(inspect.stack()[0][3]))
     return temp_out
 
 
@@ -269,7 +273,7 @@ def main():
     if args.test:
         Image.open(strip).show()
     else:
-        call(['i3lock', '-i', scrot(strip)])
+        call(['i3lock', '-i', screenshot(strip)])
 
     # Maintain all the strips: keep max 5 strips at a time
     # Make sure that only the images are deleted, not other files/folders
