@@ -8,6 +8,8 @@ import re
 import glob
 from random import randint
 import imghdr
+import inspect
+import requests
 from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv, printd
 import i3lockcomics._getcomics as _getcomics
@@ -15,6 +17,22 @@ from i3lockcomics._check_network import is_there_internet as is_there_internet
 from i3lockcomics._screen import get_screens_info
 import i3lockcomics._timing
 import hashlib
+
+
+def download_file(link, strip):
+    if link[0:4] != 'http':
+        link = 'https://{}'.format(link)
+    try:
+        with requests.get(link, stream=True, timeout=(1, 3)) as r:
+            r.raise_for_status()
+            with open(strip, 'wb') as f:
+                for chunk in r.iter_content(chunk_size=8192):
+                    # If you have chunk encoded response uncomment if
+                    # and set chunk_size parameter to None.
+                    f.write(chunk)
+        return True
+    except(requests.exceptions.ConnectionError):
+        return False
 
 
 def copy_fallback_xkcd():
@@ -250,28 +268,22 @@ def main():
         # ...but if all is ok, continue.
         # Check to see if the latest comic is already in place
         if not os.path.exists(strip):
-            curl = call(['curl', '-s', '-f', link, '-o', strip,
-                         '--connect-timeout', '3', '--max-time', '3'])
-            # If curl fails in any way, use the latest strip from same
-            # comic.
-            # Code 6 from curl is 'Could not resolve host'. Not much to
-            # do about this, but the script should have a failsafe
-            # Code 28 is a timeout that is triggered based on the
-            # `--max-time` variable
-            if curl == 6 or curl == 28:
-                strip = backup_strip
-                strip = backup_strip
-            # If curl get code 22 (basically a 404), try previous dates
-            if curl == 22:
+            dl_comic = download_file(link, strip)
+            if dl_comic is False:
+                # First try earlier dates
                 i = 0
-                while curl == 22:
+                while dl_comic is False:
                     i += 1
                     link = eval('get_{}(days={})[0]'.format(args.comic, i))
                     now = eval('get_{}(days={})[1]'.format(args.comic, i))
                     strip = '{}{}-{}.png'.format(strips_folder,
                                                  args.comic, now)
-                    curl = call(['curl', '-f', link, '-o', strip])
-                    continue
+                    dl_comic = download_file(link, strip)
+                    # We will only try three times before giving up
+                    if i == 3:
+                        strip = backup_strip
+                        break
+
             if args.comic == 'xkcd':
                 strip = _getcomics.xkcd_alttext(strip, extra_info)
         i3lockcomics._timing.midlog('Downloaded comic')

@@ -35,7 +35,9 @@ setup(
         'Pillow',
         'bs4',
         'colorama',
-        'html5lib'
+        'html5lib',
+        'imghdr',
+        'inspect'
     ],
     package_data={
         'i3lockcomics': [
