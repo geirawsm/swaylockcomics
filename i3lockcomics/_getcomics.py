@@ -164,9 +164,9 @@ def comics(comic=False):
                                timeout=3)
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
             strip = soup.find('div', attrs={'class': 'img-comic-container'})
-            link = strip.find('img', attrs={'class':
-                              'img-responsive img-comic'})['src'].\
-                replace('//', '')
+            link = strip.find('img',
+                              attrs={'class': 'img-responsive img-comic'}
+                              )['src'].replace('//', '')
         except:
             link = False
         return {'link': link}
@@ -179,24 +179,10 @@ def comics(comic=False):
             req = requests.get('https://www.dagbladet.no/tegneserie/nemi',
                                timeout=3)
             soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find_all('img', attrs={'src':
-                                 re.compile(r'.*tegneserier.dbstatic.n'
-                                            'o/.*\.jpg')})[0]['src']
-        except:
-            link = False
-        return {'link': link}
-
-    def getcomic_fagprat():
-        '''
-        Gets the link to the most recent Fagprat comic strip.
-        '''
-        try:
-            req = requests.get('https://www.dagbladet.no/tegneserie/fagprat',
-                               timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
-            link = soup.find('article')\
-                .find('a', attrs={'class': 'strip-container'})\
-                .find('img')['src']
+            link = soup.find_all('img',
+                                 attrs={'src': re.compile(
+                                        r'.*tegneserier.dbstatic.no/.*\.jpg')
+                                        })[0]['src']
         except:
             link = False
         return {'link': link}
@@ -205,14 +191,13 @@ def comics(comic=False):
         '''
         Gets the link to the most recent CommitStrip comic strip.
         '''
-        try:
-            req = requests.get('http://www.commitstrip.com/en/feed/',
-                               timeout=3)
-            soup = bs(req.content, 'html5lib', from_encoding="utf-8")\
-                .find_all('item')[0]
-            link = soup.find('content:encoded').find('img')['src']
-        except:
-            link = False
+#        try:
+        req = requests.get('http://www.commitstrip.com/en/feed/',
+                           timeout=3)
+        soup = bs(req.content, 'html5lib', from_encoding="utf-8")\
+            .find_all('item')[0]
+        link = soup.find('content:encoded')
+        link = re.search(r'.*CDATA\[<img src="(.*)" alt="', str(link)).group(1)
         return {'link': link}
 
     def getcomic_pvp():
@@ -299,6 +284,7 @@ def comics(comic=False):
 
 
 def print_comic_list():
+    '''Print a list of available comics'''
     _comics = comics()
     out = 'Comics found: '
     for comic in _comics:

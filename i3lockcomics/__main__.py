@@ -136,13 +136,8 @@ def screenshot(strip=False):
         '''
         Take a pillow_object and obfuscate it as wanted
         '''
-        obfusc_filters = ['pixel', 'morepixel', 'blur']
-        # If args.filter is not recognized, use blur
-        if args.filter not in obfusc_filters:
-            printv('Filter `{}` is not recognized'.format(args.filter))
-            printv('Using `blur` as standard')
-            args.filter = 'blur'
-        elif args.filter == 'pixel' or args.filter == 'morepixel':
+        obfusc_filters = ['pixel', 'morepixel', 'blur', 'moreblur']
+        if 'pixel' in args.filter:
             if args.filter == 'pixel':
                 pixel_size = 0.1
                 pixel_radius = 10
@@ -157,9 +152,20 @@ def screenshot(strip=False):
             image_in_h = int(float(image_in_h * pixel_radius))
             image_in = image_in.resize((image_in_w, image_in_h), Image.BOX)
         # Blur
-        elif args.filter == 'blur':
-            image_in = image_in.filter(ImageFilter.GaussianBlur(radius=10))
-        image_in.save(temp_out)
+        elif 'blur' in args.filter:
+            if args.filter == 'blur':
+                blur_radius = 10
+            elif args.filter == 'moreblur':
+                blur_radius = 20
+            image_in = image_in.filter(
+                ImageFilter.GaussianBlur(radius=blur_radius)
+            )
+        # If args.filter is not recognized, use blur
+        elif args.filter not in obfusc_filters:
+            printv('Filter `{}` is not recognized'.format(args.filter))
+            printv('Using `blur` as standard')
+            args.filter = 'blur'
+        return image_in
 
     i3lockcomics._timing.midlog('Starting `{}`'.format(inspect.stack()[0][3]))
     temp_out = '{}/out.png'.format(temp_folder)
@@ -167,8 +173,9 @@ def screenshot(strip=False):
     if os.path.exists(temp_out):
         os.remove(temp_out)
     call(['maim', temp_out])
-    screenshot_img = Image.open(temp_out)
-    bg_obfuscation(screenshot_img)
+    temp_in = Image.open(temp_out)
+    temp_obfuscated = bg_obfuscation(temp_in)
+    temp_obfuscated.save(temp_out)
 
     if strip:
         if not os.path.exists(strip):
@@ -193,8 +200,8 @@ def screenshot(strip=False):
             # Add offset
             placement_w += offset_w
             placement_h += offset_h
-            screenshot_img.paste(img, (placement_w, placement_h))
-            screenshot_img.save(temp_out)
+            temp_obfuscated.paste(img, (placement_w, placement_h))
+            temp_obfuscated.save(temp_out)
         i3lockcomics._timing.midlog('`{}` done'.format(inspect.stack()[0][3]))
     return temp_out
 
@@ -226,8 +233,15 @@ def main():
 
     # Only print a list over available comics
     if args.list:
+        # Do a test of all the comics
+        if args.test:
+            for comic in _getcomics.comics():
+                link = _getcomics.comics(comic)['link']
+                print('{}: {}'.format(comic, link))
+            sys.exit()
         _getcomics.print_comic_list()
         sys.exit()
+    
     # Fetch the newest comic, either the chosen one or a random one
     i3lockcomics._timing.midlog('Getting comic...')
     if not args.comic:
