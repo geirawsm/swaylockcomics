@@ -13,6 +13,7 @@ This script gets the latest strip of a comic which is added on top of a pixelate
 
 Comics supported:
 
+- Bestis (no) (new)
 - Calvin & Hobbes
 - CommitStrip
 - Dilbert

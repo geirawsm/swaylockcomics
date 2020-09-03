@@ -265,6 +265,21 @@ def comics(comic=False):
             link = False
         return {'link': link}
 
+    def getcomic_bestis():
+        '''
+        Gets the link to the most recent Bestis comic strip.
+        '''
+        try:
+            url = 'https://www.dagbladet.no/tegneserie/bestis'
+            req = requests.get(url, timeout=3)
+            soup = bs(req.content, 'html5lib', from_encoding="utf-8")
+            link = soup.find_all('article')[0]\
+                .find('a', attrs={'class': 'strip-container'})\
+                .find('img')['src']
+        except:
+            link = False
+        return {'link': link}
+
     if comic == 'xkcd':
         link = getcomic_xkcd()['link']
         extra_info = getcomic_xkcd()['extra_info']
