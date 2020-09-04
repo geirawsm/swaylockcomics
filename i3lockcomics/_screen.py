@@ -28,7 +28,6 @@ def get_screens_info():
 
                 eDP connected (normal left inverted right x axis y axis)
                 '''
-                print(line)
                 re_screen = re.search(r'^([a-zA-Z0-9\-]+)\s+(connected|disconnected)\sprimary\s(\d+x\d+)\+(\d+\+\d+) \(.*', line)
                 if re_screen is None:
                     continue
