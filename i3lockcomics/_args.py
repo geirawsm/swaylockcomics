@@ -50,7 +50,18 @@ parser.add_argument('-t', '--test',
                     action='store_true',
                     default=False,
                     dest='test')
+parser.add_argument('--clean-cache',
+                    help='Clean the cache folder and exit',
+                    action='store_true',
+                    default=False,
+                    dest='clean_cache')
+parser.add_argument('--delete-cache',
+                    help='Delete the cache folder and exit',
+                    action='store_true',
+                    default=False,
+                    dest='delete_cache')
 args = parser.parse_args()
+
 
 if __name__ == '__main__':
     print('These arguments are used:')

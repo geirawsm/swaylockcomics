@@ -58,6 +58,61 @@ def md5(fname):
     return hash_md5.hexdigest()
 
 
+def clean_cache():
+    '''Maintain all the cached strips, keep max 5 strips at a time'''
+    printv('Removing non-jpg-files...')
+    all_strips_files = glob.glob('{}/strips/*'.format(cachedir))
+    for file in all_strips_files:
+        if '.jpg' not in file:
+            printv('Deleting `{}`'.format(file))
+            os.remove(file)
+    # Only keep the 5 newest files
+    printv('Keeping only the five last images...')
+    all_strips_files = sorted(all_strips_files,
+                              key=sort_filename_by_date,
+                              reverse=True)
+    printd('Found {} images in `all_strips_files`'
+           .format(len(all_strips_files)))
+    if len(all_strips_files) > 5:
+        clean_number = len(all_strips_files) - 5
+        printd('number of images in `all_strips_files`: {}'.
+               format(len(all_strips_files)))
+        printd('clean_number: {}'.format(clean_number))
+        for file in all_strips_files[4:-1]:
+            printd('Deleting this file: {}'.format(file))
+            os.remove(file)
+
+
+def delete_cache():
+    '''Remove all cached strips'''
+    printv('Removing all files in cache...')
+    all_strips_files = glob.glob('{}/strips/*'.format(cachedir))
+    for file in all_strips_files:
+        printv('Deleting `{}`'.format(file))
+        os.remove(file)
+
+# Create necessary folders
+cachedir = os.path.expanduser('~/.cache/i3lockcomics')
+if not os.path.exists(cachedir):
+    call(['mkdir', cachedir])
+printv('Setting script directory to \'{}\''.format(cachedir))
+sysdir = os.path.dirname(os.path.realpath(__file__))
+printv('Getting sys-directory: \'{}\''.format(sysdir))
+temp_folder = '{}/temp'.format(cachedir)
+if not os.path.exists(temp_folder):
+    call(['mkdir', temp_folder])
+
+# Copying the XKCD fallback comic to .cache-folder
+copy_fallback_xkcd()
+
+
+if args.clean_cache:
+    clean_cache()
+    sys.exit()
+
+if args.delete_cache:
+    delete_cache()
+    sys.exit()
 # Before _ANYTHING_, we check that `i3lock`, `maim` and `curl` is
 # installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
