@@ -298,8 +298,13 @@ def main():
                         strip = backup_strip
                         break
 
-            if args.comic == 'xkcd' and not args.xkcd_no_alttext:
-                strip = _getcomics.xkcd_alttext(strip, extra_info)
+            if args.comic == 'xkcd':
+                printd('Getting xkcd')
+                if args.xkcd_no_alttext is True:
+                    printd('...but no alt-text')
+                else:
+                    strip = _getcomics.xkcd_alttext(strip, extra_info)
+                    printd('...with alt-text')
         i3lockcomics._timing.midlog('Downloaded comic')
 
     # Run lock file
