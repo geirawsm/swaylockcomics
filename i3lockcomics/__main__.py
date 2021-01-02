@@ -13,7 +13,7 @@ import requests
 from i3lockcomics._args import args as args
 from i3lockcomics._printv import printv, printd
 import i3lockcomics._getcomics as _getcomics
-from i3lockcomics._check_network import is_there_internet as is_there_internet
+from i3lockcomics._check_network import internet_available as internet_available
 from i3lockcomics._screen import get_screens_info
 import i3lockcomics._timing
 import hashlib
