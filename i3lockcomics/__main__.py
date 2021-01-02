@@ -91,6 +91,27 @@ def delete_cache():
         printv('Deleting `{}`'.format(file))
         os.remove(file)
 
+
+def sort_filename_by_date(filename):
+    '''
+    Dirty hack but ok:
+    Get a date from a filename in a highly specific format that
+    this script makes and return it
+    '''
+    try:
+        _date = re.search(r'.*-(\d{4})-(\d{2})-(\d{2}).*', filename)
+        year = _date.group(1)
+        month = _date.group(2)
+        day = _date.group(3)
+        return year, month, day
+    except(AttributeError):
+        return (str(0), str(0), str(0))
+
+
+# Start by showing the status of arguments
+printd('These arguments are used:')
+printd(vars(args))
+
 # Create necessary folders
 cachedir = os.path.expanduser('~/.cache/i3lockcomics')
 if not os.path.exists(cachedir):
@@ -113,6 +134,7 @@ if args.clean_cache:
 if args.delete_cache:
     delete_cache()
     sys.exit()
+
 # Before _ANYTHING_, we check that `i3lock`, `maim` and `curl` is
 # installed
 check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
@@ -152,20 +174,6 @@ max_screen_estate = 0.8
 max_w = int(int(mon_w) * max_screen_estate)
 max_h = int(int(mon_h) * max_screen_estate)
 printd('Got max width {} and max height {} for comic'.format(max_w, max_h))
-
-# Create necessary folders
-cachedir = os.path.expanduser('~/.cache/i3lockcomics')
-if not os.path.exists(cachedir):
-    call(['mkdir', cachedir])
-printv('Setting script directory to \'{}\''.format(cachedir))
-sysdir = os.path.dirname(os.path.realpath(__file__))
-printv('Getting sys-directory: \'{}\''.format(sysdir))
-temp_folder = '{}/temp'.format(cachedir)
-if not os.path.exists(temp_folder):
-    call(['mkdir', temp_folder])
-
-# Copying the XKCD fallback comic to .cache-folder
-copy_fallback_xkcd()
 
 
 def ratio_check(img_w, img_h):
@@ -264,22 +272,6 @@ def screenshot(strip=False, old_strip=False):
     return temp_out
 
 
-def sort_filename_by_date(filename):
-    '''
-    Dirty hack but ok:
-    Get a date from a filename in a highly specific format that
-    this script makes and return it
-    '''
-    try:
-        _date = re.search(r'.*-(\d{4})-(\d{2})-(\d{2}).*', filename)
-        year = _date.group(1)
-        month = _date.group(2)
-        day = _date.group(3)
-        return year, month, day
-    except(AttributeError):
-        return (str(0), str(0), str(0))
-
-
 def main():
     global args, _getcomics
     now = _getcomics.now
@@ -290,7 +282,7 @@ def main():
     backup_strip = _getcomics.get_backup_strip(args.comic, cachedir, sysdir)
 
     # Only print a list over available comics
-    if args.list:
+    if args.list_comics:
         # Do a test of all the comics
         if args.test:
             for comic in _getcomics.comics():
@@ -326,7 +318,7 @@ def main():
             call(['i3lock', '-i', screenshot(strip=strip,
                                              old_strip=True)])
             sys.exit()
-    if is_there_internet:
+    if internet_available:
         _comics_in = _getcomics.comics(comic=args.comic)
         link = _comics_in['link']
         extra_info = _comics_in['extra_info']
@@ -376,29 +368,7 @@ def main():
     else:
         call(['i3lock', '-i', screenshot(strip)])
 
-    # Maintain all the strips: keep max 5 strips at a time
-    # Make sure that only the images are deleted, not other files/folders
-    printv('Removing non-jpg-files...')
-    all_strips_files = glob.glob('{}/strips/*'.format(cachedir))
-    for file in all_strips_files:
-        if '.jpg' not in file:
-            printv('Deleting `{}`'.format(file))
-            os.remove(file)
-    # Only keep the 5 newest files
-    printv('Keeping only the ten last images...')
-    all_strips_files = sorted(all_strips_files,
-                              key=sort_filename_by_date,
-                              reverse=True)
-    printd('Found {} images in `all_strips_files`'
-           .format(len(all_strips_files)))
-    if len(all_strips_files) > 10:
-        clean_number = len(all_strips_files) - 10
-        printd('number of images in `all_strips_files`: {}'.
-               format(len(all_strips_files)))
-        printd('clean_number: {}'.format(clean_number))
-        for file in all_strips_files[9:-1]:
-            printd('Deleting this file: {}'.format(file))
-            os.remove(file)
+    clean_cache()
 
 
 if __name__ == '__main__':
