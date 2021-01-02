@@ -241,7 +241,7 @@ def main():
             sys.exit()
         _getcomics.print_comic_list()
         sys.exit()
-    
+
     # Fetch the newest comic, either the chosen one or a random one
     i3lockcomics._timing.midlog('Getting comic...')
     if not args.comic:
@@ -298,7 +298,7 @@ def main():
                         strip = backup_strip
                         break
 
-            if args.comic == 'xkcd':
+            if args.comic == 'xkcd' and not args.xkcd_no_alttext:
                 strip = _getcomics.xkcd_alttext(strip, extra_info)
         i3lockcomics._timing.midlog('Downloaded comic')
 

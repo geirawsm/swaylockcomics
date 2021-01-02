@@ -39,6 +39,12 @@ parser.add_argument('-f', '--filter',
                     action='store',
                     default='blur',
                     dest='filter')
+parser.add_argument('--no-alt-text',
+                    help='If getting the xkcd-strip, don\'t add the '
+                         'alttext.',
+                    action='store_true',
+                    default='False',
+                    dest='xkcd_no_alttext')
 parser.add_argument('-t', '--test',
                     help='Run `i3lockcomics` in testmode',
                     action='store_true',
