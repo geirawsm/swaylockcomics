@@ -128,7 +128,7 @@ def ratio_check(img_w, img_h):
     return img_w, img_h
 
 
-def screenshot(strip=False):
+def screenshot(strip=False, old_strip=False):
     '''
     Take screenshot of screen and pixelize it, save it
     '''
@@ -181,15 +181,18 @@ def screenshot(strip=False):
         if not os.path.exists(strip):
             pass
         else:
-            # Change the size of the comic strip
-            img = Image.open(strip)
-            img_w = int(img.size[0])
-            img_h = int(img.size[1])
-            new_size = ratio_check(img_w, img_h)
-            img_w = new_size[0]
-            img_h = new_size[1]
-            img = img.resize((img_w, img_h), Image.ANTIALIAS)
-            img.convert('RGB').save(strip)
+            if old_strip is False:
+                # Change the size of the comic strip
+                img = Image.open(strip)
+                img_w = int(img.size[0])
+                img_h = int(img.size[1])
+                new_size = ratio_check(img_w, img_h)
+                img_w = new_size[0]
+                img_h = new_size[1]
+                img = img.resize((img_w, img_h), Image.ANTIALIAS)
+                img.convert('RGB').save(strip)
+            else:
+                img = Image.open(strip)
             # Make sure comic is placed on the primary screen
             img_w = img.size[0]
             img_h = img.size[1]
@@ -249,7 +252,11 @@ def main():
             _getcomics.comics()) - 1)]
         printv('Comic not chosen, but randomly chose `{}`'.format(args.comic))
     # Set filename for comic strip to be saved
-    strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
+    if args.xkcd_no_alttext is True:
+        strip = '{}{}{}-{}.jpg'.format(strips_folder, args.comic,
+                                       '-alttext', now)
+    else:
+        strip = '{}{}-{}.jpg'.format(strips_folder, args.comic, now)
     # If filename exists, and it is a valid image file, use that
     # instead of redownloading
     if os.path.exists(strip):
@@ -261,7 +268,8 @@ def main():
         else:
             printv('...and it is good! Using that file instead of '
                    'redownloading.')
-            call(['i3lock', '-i', screenshot(strip)])
+            call(['i3lock', '-i', screenshot(strip=strip,
+                                             old_strip=True)])
             sys.exit()
     if is_there_internet:
         _comics_in = _getcomics.comics(comic=args.comic)
