@@ -21,11 +21,11 @@ parser.add_argument('--debug',
                     action='store_true',
                     default=False,
                     dest='debug')
-parser.add_argument('-l', '--list',
+parser.add_argument('-l', '--list-comics',
                     help='List the available comics',
                     action='store_true',
                     default=False,
-                    dest='list')
+                    dest='list_comics')
 parser.add_argument('-c', '--comic',
                     help='Chose what comic to use. '
                     'If no comic is called it will randomize.',

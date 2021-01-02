@@ -10,7 +10,7 @@ def printv(text):
     Instead of normal print, print to stdout with a specific format to
     differentiate the verbose text from normal text
     '''
-    if args.verbose:
+    if args.verbose or args.debug:
         print('{color}{style}{}{reset}'.format(text,
                                                color=Fore.YELLOW,
                                                style=Style.BRIGHT,

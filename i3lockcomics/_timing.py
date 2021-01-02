@@ -18,13 +18,17 @@ def secondsToStr(elapsed=None):
 
 def log(_text, elapsed=None):
     out = ''
+    temp_out = ''
     if 'start' not in _text.lower():
         out += '\n'
-    line = '{}'.format('=' * 40)
-    out += '{line}\n'.format(line=line)
-    out += '{time} - {_text}\n'.format(time=secondsToStr(), _text=_text)
+    temp_out += '{time} - {_text}'.format(time=secondsToStr(), _text=_text)
     if elapsed:
-        out += 'Elapsed time: {}\n'.format(elapsed)
+        temp_out += ' - elapsed time: {}\n'.format(elapsed)
+    else:
+        temp_out += '\n'
+    line = '{}'.format('=' * len(temp_out))
+    out += '{line}\n'.format(line=line)
+    out += temp_out
     out += '{line}'.format(line=line)
     if 'end' not in _text.lower():
         out += '\n'
