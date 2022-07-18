@@ -166,7 +166,7 @@ def comics(comic=False):
             strip = soup.find('div', attrs={'class': 'img-comic-container'})
             link = strip.find('img',
                               attrs={'class': 'img-responsive img-comic'}
-                              )['src'].replace('//', '')
+                              )['src']
         except:
             link = False
         return {'link': link}
