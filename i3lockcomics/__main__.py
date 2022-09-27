@@ -223,11 +223,6 @@ def screenshot(strip=False, old_strip=False):
             image_in = image_in.filter(
                 ImageFilter.GaussianBlur(radius=blur_radius)
             )
-        # If args.filter is not recognized, use blur
-        elif args.filter not in obfusc_filters:
-            printv('Filter `{}` is not recognized'.format(args.filter))
-            printv('Using `blur` as standard')
-            args.filter = 'blur'
         return image_in
 
     i3lockcomics._timing.midlog('Starting `{}`'.format(inspect.stack()[0][3]))
