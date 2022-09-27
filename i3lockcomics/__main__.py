@@ -3,7 +3,7 @@
 import sys
 import os
 from subprocess import call
-from PIL import Image, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter
 import re
 import glob
 from random import randint
@@ -199,7 +199,9 @@ def screenshot(strip=False, old_strip=False):
         '''
         Take a pillow_object and obfuscate it as wanted
         '''
-        obfusc_filters = ['pixel', 'morepixel', 'blur', 'moreblur']
+        obfusc_filters = ['pixel', 'morepixel', 'blur', 'moreblur', 'gradient', 'solid']
+        image_in_w = image_in.size[0]
+        image_in_h = image_in.size[1]
         if 'pixel' in args.filter:
             if args.filter == 'pixel':
                 pixel_size = 0.1
@@ -223,6 +225,16 @@ def screenshot(strip=False, old_strip=False):
             image_in = image_in.filter(
                 ImageFilter.GaussianBlur(radius=blur_radius)
             )
+        elif 'gradient' in args.filter:
+            image_draw = ImageDraw.Draw(image_in)
+            left_color = 32
+            right_color = 128
+            image_in_s = image_in_w / (right_color - left_color)
+            for x in range(right_color - left_color):
+                image_draw.rectangle([(x*image_in_s,0),((x+1)*image_in_s-1,image_in_h)], fill=f"#{x:02x}{x:02x}{x:02x}")
+        elif 'solid' in args.filter:
+            image_draw = ImageDraw.Draw(image_in)
+            image_draw.rectangle([(0,0),(image_in_w,image_in_h)], fill="#202020")
         return image_in
 
     i3lockcomics._timing.midlog('Starting `{}`'.format(inspect.stack()[0][3]))
