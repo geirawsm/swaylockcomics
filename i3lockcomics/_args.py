@@ -34,10 +34,11 @@ parser.add_argument('-c', '--comic',
                     dest='comic')
 parser.add_argument('-f', '--filter',
                     help='Chose what obfuscation filter to use, either '
-                         '`pixel`, `morepixel`, `blur` og `moreblur`. '
-                         '`blur` is default.',
+                         '`pixel`, `morepixel`, `blur`, `moreblur`,
+                         '`solid` or `gradient`. '
+                         '`solid` is default.',
                     action='store',
-                    default='blur',
+                    default='solid',
                     dest='filter')
 parser.add_argument('--no-alt-text',
                     help='If getting the xkcd-strip, don\'t add the '
