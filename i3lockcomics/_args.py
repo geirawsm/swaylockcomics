@@ -35,7 +35,7 @@ parser.add_argument('-c', '--comic',
 parser.add_argument('-f', '--filter',
                     help='Chose what obfuscation filter to use, either '
                          '`pixel`, `morepixel`, `blur`, `moreblur`,
-                         '`solid` or `gradient`. '
+                         '`solid` or `gradient`. ',
                          '`solid` is default.',
                     action='store',
                     default='solid',
