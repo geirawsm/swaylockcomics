@@ -10,12 +10,12 @@ from random import randint
 import imghdr
 import inspect
 import requests
-from i3lockcomics._args import args as args
-from i3lockcomics._printv import printv, printd
-import i3lockcomics._getcomics as _getcomics
-from i3lockcomics._check_network import internet_available as internet_available
-from i3lockcomics._screen import get_screens_info
-import i3lockcomics._timing
+from swaylockcomics._args import args as args
+from swaylockcomics._printv import printv, printd
+import swaylockcomics._getcomics as _getcomics
+from swaylockcomics._check_network import internet_available as internet_available
+from swaylockcomics._screen import get_screens_info
+import swaylockcomics._timing
 import hashlib
 
 
@@ -113,7 +113,7 @@ printd('These arguments are used:')
 printd(vars(args))
 
 # Create necessary folders
-cachedir = os.path.expanduser('~/.cache/i3lockcomics')
+cachedir = os.path.expanduser('~/.cache/swaylockcomics')
 if not os.path.exists(cachedir):
     call(['mkdir', cachedir])
 printv('Setting script directory to \'{}\''.format(cachedir))
@@ -135,26 +135,26 @@ if args.delete_cache:
     delete_cache()
     sys.exit()
 
-# Before _ANYTHING_, we check that `i3lock`, `maim` and `curl` is
+# Before _ANYTHING_, we check that `swaylock`, `maim` and `curl` is
 # installed
-check_i3lock = call(['which', 'i3lock'], stdout=open(os.devnull, 'w'),
+check_swaylock = call(['which', 'swaylock'], stdout=open(os.devnull, 'w'),
                     stderr=open(os.devnull, 'w'))
 check_maim = call(['which', 'maim'], stdout=open(os.devnull, 'w'),
                   stderr=open(os.devnull, 'w'))
 check_curl = call(['which', 'curl'], stdout=open(os.devnull, 'w'),
                   stderr=open(os.devnull, 'w'))
-if check_i3lock == 1:
-    raise Exception('Could not find that `i3lock` is installed. Please '
+if check_swaylock == 1:
+    raise Exception('Could not find that `swaylock` is installed. Please '
                     'make sure that this is installed as it is required'
-                    ' for `i3lockcomics` to run.')
+                    ' for `swaylockcomics` to run.')
 if check_maim == 1:
     raise Exception('Could not find that `maim` is installed. Please '
                     'make sure that this is installed as it is required'
-                    ' for `i3lockcomics` to run.')
+                    ' for `swaylockcomics` to run.')
 if check_curl == 1:
     raise Exception('Could not find that `curl` is installed. Please '
                     'make sure that this is installed as it is required'
-                    ' for `i3lockcomics` to run.')
+                    ' for `swaylockcomics` to run.')
 
 
 # Get screen info
@@ -230,7 +230,7 @@ def screenshot(strip=False, old_strip=False):
             args.filter = 'blur'
         return image_in
 
-    i3lockcomics._timing.midlog('Starting `{}`'.format(inspect.stack()[0][3]))
+    swaylockcomics._timing.midlog('Starting `{}`'.format(inspect.stack()[0][3]))
     temp_out = '{}/out.png'.format(temp_folder)
     # If tempfile already exist, remove it and take new screenshot
     if os.path.exists(temp_out):
@@ -268,7 +268,7 @@ def screenshot(strip=False, old_strip=False):
             placement_h += offset_h
             temp_obfuscated.paste(img, (placement_w, placement_h))
             temp_obfuscated.save(temp_out)
-        i3lockcomics._timing.midlog('`{}` done'.format(inspect.stack()[0][3]))
+        swaylockcomics._timing.midlog('`{}` done'.format(inspect.stack()[0][3]))
     return temp_out
 
 
@@ -293,7 +293,7 @@ def main():
         sys.exit()
 
     # Fetch the newest comic, either the chosen one or a random one
-    i3lockcomics._timing.midlog('Getting comic...')
+    swaylockcomics._timing.midlog('Getting comic...')
     if not args.comic:
         args.comic = _getcomics.comics()[randint(0, len(
             _getcomics.comics()) - 1)]
@@ -315,7 +315,7 @@ def main():
         else:
             printv('...and it is good! Using that file instead of '
                    'redownloading.')
-            call(['i3lock', '-i', screenshot(strip=strip,
+            call(['swaylock', '-i', screenshot(strip=strip,
                                              old_strip=True)])
             sys.exit()
     if internet_available:
@@ -333,7 +333,7 @@ def main():
         printv('Comic returns `False` in link. Using XKCD-fallback strip')
         strip = backup_strip
     else:
-        i3lockcomics._timing.midlog('Starting check comic or download')
+        swaylockcomics._timing.midlog('Starting check comic or download')
         # ...but if all is ok, continue.
         # Check to see if the latest comic is already in place
         if not os.path.exists(strip):
@@ -360,13 +360,13 @@ def main():
                 else:
                     strip = _getcomics.xkcd_alttext(strip, extra_info)
                     printd('...with alt-text')
-        i3lockcomics._timing.midlog('Downloaded comic')
+        swaylockcomics._timing.midlog('Downloaded comic')
 
     # Run lock file
     if args.test:
         Image.open(strip).show()
     else:
-        call(['i3lock', '-i', screenshot(strip)])
+        call(['swaylock', '-i', screenshot(strip)])
 
     clean_cache()
 

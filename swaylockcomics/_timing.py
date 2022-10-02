@@ -6,7 +6,7 @@
 import atexit
 from time import time, strftime, localtime
 from datetime import timedelta
-from i3lockcomics._args import args
+from swaylockcomics._args import args
 
 
 def secondsToStr(elapsed=None):

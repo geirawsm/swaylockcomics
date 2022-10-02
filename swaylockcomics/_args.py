@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse
-from i3lockcomics.__version__ import version
+from swaylockcomics.__version__ import version
 
 parser = argparse.ArgumentParser()
-parser.prog = 'i3lockcomics'
+parser.prog = 'swaylockcomics'
 parser.description = 'Lock your screen AND show a comic at the same '\
                      'time, you lucky dog you'
 parser.add_argument('--version', '-V',
@@ -46,7 +46,7 @@ parser.add_argument('--no-alt-text',
                     default='False',
                     dest='xkcd_no_alttext')
 parser.add_argument('-t', '--test',
-                    help='Run `i3lockcomics` in testmode',
+                    help='Run `swaylockcomics` in testmode',
                     action='store_true',
                     default=False,
                     dest='test')

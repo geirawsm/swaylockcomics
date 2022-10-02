@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from i3lockcomics._args import args
+from swaylockcomics._args import args
 from colorama import init, Fore, Style
 init(autoreset=True)
 

@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 from os import path
 from io import open
-from i3lockcomics.__version__ import version
+from swaylockcomics.__version__ import version
 
 here = path.abspath(path.dirname(__file__))
 
@@ -12,19 +12,19 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name='i3lockcomics',    # Required
+    name='swaylockcomics',    # Required
     version=version,
     description=('Gets the newest edition of a comic strip and use it in '
-                 'i3lock'),
+                 'swaylock'),
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/armandg/i3lockcomics',
+    url='https://github.com/armandg/swaylockcomics',
     license='GPL-v3.0',
-    author='armandg',
-    author_email='armandg@gmail.com',
+    author='geirawsm',
+    author_email='geirawsm@pm.me',
     entry_points={
         'console_scripts': [
-            'i3lockcomics = i3lockcomics.__main__:main'
+            'swaylockcomics = swaylockcomics.__main__:main'
         ]
     },
     packages=find_packages(),
@@ -38,7 +38,7 @@ setup(
         'html5lib'
     ],
     package_data={
-        'i3lockcomics': [
+        'swaylockcomics': [
             'xkcd.png',
             'fonts/OpenSans-Italic.ttf'
         ]

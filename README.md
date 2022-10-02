@@ -1,5 +1,5 @@
-# i3lockcomics
-Python script to fetch the newest edition of a comic strip and use it in i3lock. *Highly* inspired by [xkcd-lock](https://github.com/angs/xkcd-lock) by [@angs](https://github.com/angs).
+# swaylockcomics
+Python script to fetch the newest edition of a comic strip and use it in swaylock. *Highly* inspired by [xkcd-lock](https://github.com/angs/xkcd-lock) by [@angs](https://github.com/angs).
 
 &nbsp;
 
@@ -9,7 +9,7 @@ Python script to fetch the newest edition of a comic strip and use it in i3lock.
 
 ## Short description
 
-This script gets the latest strip of a comic which is added on top of a pixelated screenshot of your desktop. This image is then used as a background image when running i3lock.
+This script gets the latest strip of a comic which is added on top of a pixelated screenshot of your desktop. This image is then used as a background image when running swaylock.
 
 Comics supported:
 
@@ -27,13 +27,13 @@ Comics supported:
 
 ## Install
 
-Easy peasy: `pip install i3lockcomics`
+Easy peasy: `pip install swaylockcomics`
 
 &nbsp;
 
 ## How to use
 
-Run `i3lockcomics` to lock your screen with i3lock and show a random comic strip. You can also chose a specific comic and use a pixellation distort on your lockscreen instead of the blurring. Check out `i3lockcomics -h` for more info.
+Run `swaylockcomics` to lock your screen with swaylock and show a random comic strip. You can also chose a specific comic and use a pixellation distort on your lockscreen instead of the blurring. Check out `swaylockcomics -h` for more info.
 
 If you use multiple displays, the script will only place the comic strip on your primary screen.
 
@@ -55,6 +55,6 @@ When using xkcd, it will also get the alt-text for the image and paste it undern
 
 These dependencies are required besides the modules installed by pip:
 
-- i3lock
+- swaylock
 - maim
 - curl (called by the subprocess module)
