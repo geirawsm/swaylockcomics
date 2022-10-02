@@ -181,8 +181,7 @@ def comics(comic=False):
                            timeout=3)
         soup = bs(req.content, 'html5lib', from_encoding="utf-8")\
             .find_all('item')[0]
-        link = soup.find('content:encoded')
-        link = re.search(r'.*CDATA\[<img src="(.*)" alt="', str(link)).group(1)
+        link = soup.find('content:encoded').find('img')['src']
         return {'link': link}
 
     def getcomic_pvp():

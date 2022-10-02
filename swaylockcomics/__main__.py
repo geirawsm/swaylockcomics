@@ -252,7 +252,7 @@ def screenshot(strip=False, old_strip=False):
                 new_size = ratio_check(img_w, img_h)
                 img_w = new_size[0]
                 img_h = new_size[1]
-                img = img.resize((img_w, img_h), Image.ANTIALIAS)
+                img = img.resize((img_w, img_h), Image.Resampling.LANCZOS)
                 img.convert('RGB').save(strip)
             else:
                 img = Image.open(strip)
